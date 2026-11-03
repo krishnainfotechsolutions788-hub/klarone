@@ -23,7 +23,7 @@ import { MonitoringModule } from "./modules/monitoring/monitoring.module";
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ["../../.env", ".env"],
+      envFilePath: ["../../.env.local", "../../.env", ".env.local", ".env"],
     }),
     StorageModule,
     PrismaModule,
@@ -46,3 +46,4 @@ import { MonitoringModule } from "./modules/monitoring/monitoring.module";
   ],
 })
 export class AppModule {}
+
