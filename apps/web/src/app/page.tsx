@@ -23,7 +23,6 @@ export const metadata: Metadata = {
 export default async function StorefrontHomePage() {
   const [topProductsResponse, collectionsData] = await Promise.all([
     getProducts({
-      collectionSlug: "top-picks",
       pageSize: 6,
     }).catch(() => null),
     getCollections().catch(() => []),

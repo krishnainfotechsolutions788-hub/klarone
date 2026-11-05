@@ -30,7 +30,7 @@ import VariantDetailsSections from "@/components/staff/variants/variant-details-
 const inputClass =
   "w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-[13px] text-neutral-900 outline-none transition placeholder:text-neutral-400 hover:border-neutral-300 focus:border-neutral-400 focus:ring-2 focus:ring-neutral-200";
 
-export function getVariantDisplayName(
+function getVariantDisplayName(
   v:
     | {
         sku?: string | null;

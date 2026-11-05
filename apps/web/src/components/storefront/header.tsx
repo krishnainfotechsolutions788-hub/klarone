@@ -109,10 +109,10 @@ export function StorefrontHeader() {
 
   const fallbackCollections = [
     { id: 1, title: "Bestsellers & Staff Picks", slug: "bestsellers", icon: "⭐" },
-    { id: 2, title: "Pure OLED & Cinema Displays", slug: "pure-oled-displays", icon: "✨" },
+    { id: 2, title: "Business & Enterprise Fleet", slug: "business-laptops", icon: "💼" },
     { id: 3, title: "Engineered for Pro Creators", slug: "pro-creators", icon: "🚀" },
     { id: 4, title: "Best for Students & Coding", slug: "student-and-coding", icon: "🎓" },
-    { id: 5, title: "Flagship Copilot+ PCs", slug: "copilot-pcs", icon: "🤖" },
+    { id: 5, title: "High Performance 16GB+ RAM", slug: "heavy-multitasking", icon: "⚡" },
     { id: 6, title: "Ultra-Light Mobility Under 1.3kg", slug: "ultra-light", icon: "🪶" },
   ];
 

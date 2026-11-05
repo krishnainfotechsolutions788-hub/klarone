@@ -3,7 +3,9 @@ import { StorefrontHeader } from "../../components/storefront/header";
 import { StorefrontFooter } from "../../components/storefront/newsletter-and-footer";
 import { CatalogueListingLayout } from "../../components/catalogue/catalogue-listing-layout";
 import {
+  getBrands,
   getCategories,
+  getCollections,
   getFacets,
   getProducts,
 } from "../../lib/api";
@@ -82,8 +84,10 @@ export default async function LaptopsPage({
   const sortBy = (getSingleValue(params.sortBy) as "featured" | "price-asc" | "price-desc" | "newest") || "featured";
   const page = getPageNumber(params.page);
 
-  const [categories, facets, productsResponse] = await Promise.all([
+  const [categories, collections, brands, facets, productsResponse] = await Promise.all([
     getCategories().catch(() => []),
+    getCollections().catch(() => []),
+    getBrands().catch(() => []),
     getFacets({ categorySlug, collectionSlug }).catch(() => ({
       brands: [],
       collections: [],
@@ -120,23 +124,31 @@ export default async function LaptopsPage({
   // Clean categories for horizontal carousel (ignore root laptops)
   const carouselCategories = categories.filter((c) => c.slug !== "laptops");
 
-  // Title & Breadcrumbs logic
+  // Title & Dynamic Breadcrumbs logic following E-Commerce standards
   let pageTitle = "Shop All";
+  const breadcrumbs: { label: string; href?: string }[] = [
+    { label: "Home", href: "/" },
+    { label: "Laptops", href: "/laptops" },
+  ];
+
   if (categorySlug) {
     const activeCat = categories.find((c) => c.slug === categorySlug);
-    if (activeCat) pageTitle = activeCat.name;
+    pageTitle = activeCat ? activeCat.name : categorySlug.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+    breadcrumbs.push({ label: "Category", href: "/laptops" });
+    breadcrumbs.push({ label: pageTitle });
   } else if (collectionSlug) {
-    pageTitle = collectionSlug
-      .split("-")
-      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-      .join(" ");
+    const activeCol = collections.find((c) => c.slug === collectionSlug);
+    pageTitle = activeCol ? activeCol.title : collectionSlug.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+    breadcrumbs.push({ label: "Collection", href: "/laptops" });
+    breadcrumbs.push({ label: pageTitle });
+  } else if (brandSlug) {
+    const activeBrand = brands.find((b) => b.slug === brandSlug);
+    pageTitle = activeBrand ? activeBrand.name : brandSlug.charAt(0).toUpperCase() + brandSlug.slice(1);
+    breadcrumbs.push({ label: "Brand", href: "/laptops" });
+    breadcrumbs.push({ label: pageTitle });
+  } else {
+    breadcrumbs.push({ label: "Shop All" });
   }
-
-  const breadcrumbs = [
-    { label: "Home", href: "/" },
-    { label: "Collection", href: "/laptops" },
-    { label: pageTitle },
-  ];
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
