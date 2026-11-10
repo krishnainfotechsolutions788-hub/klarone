@@ -460,7 +460,7 @@ export function ProductExperienceView({ product }: ProductViewProps) {
                     key={idx}
                     type="button"
                     onClick={() => scrollToImage(idx)}
-                    className={`relative w-20 rounded-xl overflow-hidden border transition-all duration-150 bg-[#f4f5f3] shrink-0 p-0 flex items-center justify-center ${
+                    className={`relative w-20 aspect-square rounded-xl overflow-hidden border transition-all duration-150 bg-[#f8f9fa] shrink-0 p-1.5 flex items-center justify-center ${
                       isSelected
                         ? "border-2 border-neutral-900 ring-2 ring-neutral-900/10 shadow-xs"
                         : "border-neutral-200/90 hover:border-neutral-400 opacity-80 hover:opacity-100"
@@ -469,7 +469,7 @@ export function ProductExperienceView({ product }: ProductViewProps) {
                     <img
                       src={imgSrc}
                       alt={`${product.name} thumbnail ${idx + 1}`}
-                      className="w-full h-auto object-contain block p-0"
+                      className="w-full h-full object-contain block select-none"
                     />
                   </button>
                 );
@@ -479,11 +479,11 @@ export function ProductExperienceView({ product }: ProductViewProps) {
             {/* Mobile View: Single Featured Hero Image + Horizontal Thumbnails directly below (matching reference) */}
             <div className="flex md:hidden flex-col gap-3 w-full">
               {/* Featured Large Hero Image with Zoom Search Icon */}
-              <div className="relative w-full rounded-2xl bg-[#f8f9fa] overflow-hidden border border-neutral-200/80 p-0 shadow-xs">
+              <div className="relative w-full min-h-[340px] sm:min-h-[420px] rounded-2xl bg-[#f8f9fa] overflow-hidden border border-neutral-200/80 p-6 sm:p-8 shadow-xs flex items-center justify-center">
                 <img
                   src={galleryImages[activeImageIndex] || galleryImages[0]}
                   alt={`${product.name} active preview`}
-                  className="w-full h-auto object-contain block p-0"
+                  className="w-full h-auto max-h-[380px] object-contain block select-none"
                 />
                 
                 {/* Floating Search/Zoom Icon pill in top-right */}
@@ -507,7 +507,7 @@ export function ProductExperienceView({ product }: ProductViewProps) {
                       key={idx}
                       type="button"
                       onClick={() => setActiveImageIndex(idx)}
-                      className={`relative w-14 sm:w-16 rounded-xl overflow-hidden border transition-all duration-150 bg-[#f4f5f3] shrink-0 p-0 flex items-center justify-center ${
+                      className={`relative w-14 sm:w-16 aspect-square rounded-xl overflow-hidden border transition-all duration-150 bg-[#f8f9fa] shrink-0 p-1 flex items-center justify-center ${
                         isSelected
                           ? "border-2 border-neutral-900 ring-2 ring-neutral-900/10 shadow-xs"
                           : "border-neutral-200/90 hover:border-neutral-400 opacity-80"
@@ -516,7 +516,7 @@ export function ProductExperienceView({ product }: ProductViewProps) {
                       <img
                         src={imgSrc}
                         alt={`${product.name} mobile thumb ${idx + 1}`}
-                        className="w-full h-auto object-contain block p-0"
+                        className="w-full h-full object-contain block select-none"
                       />
                     </button>
                   );
@@ -534,14 +534,14 @@ export function ProductExperienceView({ product }: ProductViewProps) {
                       imageRefs.current[idx] = el;
                     }}
                     onClick={() => setActiveImageIndex(idx)}
-                    className={`relative w-full rounded-2xl md:rounded-3xl bg-[#f8f9fa] overflow-hidden border border-neutral-200/80 transition-shadow p-0 ${
+                    className={`relative w-full min-h-[440px] lg:min-h-[500px] rounded-2xl md:rounded-3xl bg-[#f8f9fa] overflow-hidden border border-neutral-200/80 transition-shadow p-6 lg:p-8 flex items-center justify-center cursor-pointer ${
                       activeImageIndex === idx ? "ring-1 ring-neutral-300" : ""
                     }`}
                   >
                     <img
                       src={imgSrc}
                       alt={`${product.name} view ${idx + 1}`}
-                      className="w-full h-auto object-contain block p-0"
+                      className="w-full h-auto max-h-[480px] lg:max-h-[520px] object-contain block select-none transition-transform duration-300 hover:scale-[1.02]"
                       loading={idx === 0 ? "eager" : "lazy"}
                     />
                   </div>
