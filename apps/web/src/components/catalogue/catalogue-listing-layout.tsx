@@ -71,20 +71,34 @@ export function CatalogueListingLayout({
 
   return (
     <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 pt-3 sm:pt-4 pb-8">
-      {/* 1. BREADCRUMBS */}
-      <nav className="mb-4 sm:mb-6 flex items-center gap-2 text-xs sm:text-[14px] font-medium text-stone-500">
-        {breadcrumbs.map((crumb, idx) => (
-          <span key={idx} className="flex items-center gap-2">
-            {crumb.href ? (
-              <Link href={crumb.href} className="hover:text-slate-950 transition-colors">
-                {crumb.label}
-              </Link>
-            ) : (
-              <span className="font-semibold text-slate-900">{crumb.label}</span>
-            )}
-            {idx < breadcrumbs.length - 1 && <span className="text-stone-300 font-normal">/</span>}
-          </span>
-        ))}
+      {/* 1. BREADCRUMBS: Responsive & Clean (Scrollable / Collapsible on Mobile to prevent awkward multi-line breaks) */}
+      <nav
+        aria-label="Breadcrumbs"
+        className="mb-3.5 sm:mb-6 flex items-center gap-1.5 sm:gap-2 text-xs sm:text-[14px] font-medium text-stone-500 overflow-x-auto no-scrollbar whitespace-nowrap py-0.5"
+      >
+        {breadcrumbs.map((crumb, idx) => {
+          const isLast = idx === breadcrumbs.length - 1;
+          return (
+            <span key={idx} className="inline-flex items-center gap-1.5 sm:gap-2 shrink-0">
+              {crumb.href ? (
+                <Link
+                  href={crumb.href}
+                  className="hover:text-slate-950 transition-colors truncate max-w-[100px] sm:max-w-none"
+                >
+                  {crumb.label}
+                </Link>
+              ) : (
+                <span
+                  title={crumb.label}
+                  className="font-semibold text-slate-900 truncate max-w-[190px] sm:max-w-xs md:max-w-none"
+                >
+                  {crumb.label}
+                </span>
+              )}
+              {!isLast && <span className="text-stone-300 font-normal select-none">/</span>}
+            </span>
+          );
+        })}
       </nav>
 
       {/* 2. TOOLBAR (FILTERS BUTTON, COUNT, SEARCH INPUT) */}

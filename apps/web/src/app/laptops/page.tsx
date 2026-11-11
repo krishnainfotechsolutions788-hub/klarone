@@ -134,17 +134,14 @@ export default async function LaptopsPage({
   if (categorySlug) {
     const activeCat = categories.find((c) => c.slug === categorySlug);
     pageTitle = activeCat ? activeCat.name : categorySlug.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
-    breadcrumbs.push({ label: "Category", href: "/laptops" });
     breadcrumbs.push({ label: pageTitle });
   } else if (collectionSlug) {
     const activeCol = collections.find((c) => c.slug === collectionSlug);
     pageTitle = activeCol ? activeCol.title : collectionSlug.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
-    breadcrumbs.push({ label: "Collection", href: "/laptops" });
     breadcrumbs.push({ label: pageTitle });
   } else if (brandSlug) {
     const activeBrand = brands.find((b) => b.slug === brandSlug);
     pageTitle = activeBrand ? activeBrand.name : brandSlug.charAt(0).toUpperCase() + brandSlug.slice(1);
-    breadcrumbs.push({ label: "Brand", href: "/laptops" });
     breadcrumbs.push({ label: pageTitle });
   } else {
     breadcrumbs.push({ label: "Shop All" });
