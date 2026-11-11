@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState, useTransition } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 interface CatalogueToolbarProps {
@@ -20,35 +21,47 @@ export function CatalogueToolbar({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [, startTransition] = useTransition();
 
-  const currentSort = searchParams.get("sortBy") ?? "featured";
   const currentSearch = searchParams.get("search") ?? "";
+  const [searchValue, setSearchValue] = useState(currentSearch);
 
-  const handleClearSearch = () => {
+  // Keep input in sync with URL
+  useEffect(() => {
+    setSearchValue(currentSearch);
+  }, [currentSearch]);
+
+  const handleSearchSubmit = (e?: React.FormEvent) => {
+    e?.preventDefault();
+    const params = new URLSearchParams(searchParams.toString());
+    const trimmed = searchValue.trim();
+    if (trimmed) {
+      params.set("search", trimmed);
+    } else {
+      params.delete("search");
+    }
+    params.delete("page");
+    const query = params.toString();
+    startTransition(() => {
+      router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
+    });
+  };
+
+  const handleClear = () => {
+    setSearchValue("");
     const params = new URLSearchParams(searchParams.toString());
     params.delete("search");
     params.delete("page");
     const query = params.toString();
-    router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
-  };
-
-  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const params = new URLSearchParams(searchParams.toString());
-    const val = e.target.value;
-    if (val && val !== "featured") {
-      params.set("sortBy", val);
-    } else {
-      params.delete("sortBy");
-    }
-    params.delete("page");
-    const query = params.toString();
-    router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
+    startTransition(() => {
+      router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
+    });
   };
 
   return (
-    <div className="flex items-center justify-between border-b border-stone-200/80 pb-4 sm:pb-6">
-      {/* Left: Filters Pill Button matching user reference */}
-      <div className="flex items-center gap-3 sm:gap-5 flex-wrap">
+    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 border-b border-stone-200/80 pb-4 sm:pb-6">
+      {/* Left Column: Filters Pill Button + Total Count */}
+      <div className="flex items-center gap-3 sm:gap-5">
         <button
           type="button"
           onClick={onToggleFilters}
@@ -70,55 +83,56 @@ export function CatalogueToolbar({
           <span>Filter &amp; Sort</span>
         </button>
 
-        {/* Desktop Product Count */}
-        <span className="hidden sm:inline text-sm font-medium text-stone-500">
+        {/* Product Count */}
+        <span className="text-xs sm:text-sm font-medium text-stone-500 whitespace-nowrap">
           {total} {total === 1 ? "product" : "products"}
         </span>
+      </div>
 
-        {/* Active Search Query Badge if filtered */}
-        {currentSearch && (
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-xs font-semibold text-emerald-950">
-            <span>Query: &ldquo;{currentSearch}&rdquo;</span>
+      {/* Right Column: Search Box (Replacing Sort By) */}
+      <form
+        onSubmit={handleSearchSubmit}
+        className="relative flex-1 max-w-full sm:max-w-xs md:max-w-sm"
+      >
+        <div className="relative flex items-center">
+          <input
+            type="text"
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            placeholder="Search laptops in catalog..."
+            className="h-11 w-full rounded-full border border-stone-300 bg-white pl-10 pr-9 text-xs sm:text-sm font-medium text-slate-900 placeholder:text-stone-400 outline-none transition-all duration-200 focus:border-slate-950 focus:ring-1 focus:ring-slate-950/10 shadow-2xs"
+          />
+
+          {/* Search Icon inside Input */}
+          <div className="pointer-events-none absolute left-3.5 text-stone-400">
+            <svg
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+              />
+            </svg>
+          </div>
+
+          {/* Clear "x" Button when text exists */}
+          {searchValue && (
             <button
               type="button"
-              onClick={handleClearSearch}
-              className="hover:text-emerald-700 font-bold ml-1 text-sm leading-none"
-              title="Clear search query"
+              onClick={handleClear}
+              aria-label="Clear search"
+              className="absolute right-3 flex h-5 w-5 items-center justify-center rounded-full text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition text-sm font-bold leading-none"
             >
               ×
             </button>
-          </div>
-        )}
-      </div>
-
-      {/* Right on mobile: Product count like in the reference image ("18 products") */}
-      <span className="sm:hidden text-xs sm:text-sm font-medium text-stone-600">
-        {total} {total === 1 ? "product" : "products"}
-      </span>
-
-      {/* Right on desktop: Sort By */}
-      <div className="hidden sm:flex items-center gap-6">
-        <div className="flex items-center gap-2.5">
-          <span className="text-stone-500 text-sm font-medium">Sort by</span>
-          <div className="relative">
-            <select
-              value={currentSort}
-              onChange={handleSortChange}
-              className="h-11 appearance-none rounded-full border border-stone-300 bg-white px-5 pr-11 text-sm font-semibold text-slate-900 outline-none hover:border-slate-800 focus:border-slate-950 shadow-2xs"
-            >
-              <option value="featured">Best selling</option>
-              <option value="price-asc">Price: Low to high</option>
-              <option value="price-desc">Price: High to low</option>
-              <option value="newest">Newest arrivals</option>
-            </select>
-            <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-stone-600">
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-              </svg>
-            </div>
-          </div>
+          )}
         </div>
-      </div>
+      </form>
     </div>
   );
 }
