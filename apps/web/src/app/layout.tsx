@@ -1,24 +1,8 @@
 import Script from "next/script";
 import type { Metadata, Viewport } from "next";
-import { Plus_Jakarta_Sans, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "../components/cart/cart-provider";
 import { CustomerAuthProvider } from "@/components/auth/customer-auth-provider";
-
-const sansFont = Plus_Jakarta_Sans({
-    variable: "--font-sans",
-    subsets: ["latin"],
-    weight: ["400", "500", "600", "700"],
-    display: "swap",
-});
-
-const serifFont = Instrument_Serif({
-    variable: "--font-serif",
-    subsets: ["latin"],
-    weight: ["400"],
-    style: ["normal", "italic"],
-    display: "swap",
-});
 
 export const viewport: Viewport = {
     width: "device-width",
@@ -122,7 +106,6 @@ export default function RootLayout({
     return (
         <html
             lang="en"
-            className={`${sansFont.variable} ${serifFont.variable}`}
             suppressHydrationWarning
         >
             <head>
