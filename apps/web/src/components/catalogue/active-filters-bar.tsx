@@ -22,7 +22,11 @@ export function ActiveFiltersBar({ facets, total }: ActiveFiltersBarProps) {
   const [, startTransition] = useTransition();
 
   const currentSearch = searchParams.get("search")?.trim() ?? "";
-  const currentCollectionSlug = searchParams.get("collectionSlug") ?? "";
+  const currentCollectionSlugs = searchParams.get("collectionSlugs")
+    ? searchParams.get("collectionSlugs")!.split(",").filter(Boolean)
+    : searchParams.get("collectionSlug")
+    ? [searchParams.get("collectionSlug")!]
+    : [];
   const currentBrandSlugs = searchParams.get("brandSlugs")
     ? searchParams.get("brandSlugs")!.split(",").filter(Boolean)
     : searchParams.get("brandSlug")
@@ -71,15 +75,21 @@ export function ActiveFiltersBar({ facets, total }: ActiveFiltersBarProps) {
     });
   }
 
-  // 2. Collection Badge
-  if (currentCollectionSlug) {
-    const matchedCol = facets.collections?.find((c) => c.slug === currentCollectionSlug);
+  // 2. Collections Badges (Multi-select)
+  currentCollectionSlugs.forEach((slug) => {
+    const matchedCol = facets.collections?.find((c) => c.slug === slug);
     badges.push({
-      id: `collection-${currentCollectionSlug}`,
-      label: matchedCol ? matchedCol.title : currentCollectionSlug,
-      onRemove: () => removeParam({ collectionSlug: undefined }),
+      id: `collection-${slug}`,
+      label: matchedCol ? matchedCol.title : slug,
+      onRemove: () => {
+        const remaining = currentCollectionSlugs.filter((s) => s !== slug);
+        removeParam({
+          collectionSlugs: remaining.length > 0 ? remaining.join(",") : undefined,
+          collectionSlug: undefined,
+        });
+      },
     });
-  }
+  });
 
   // 3. Brands Badges
   currentBrandSlugs.forEach((slug) => {

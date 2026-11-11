@@ -82,6 +82,7 @@ export async function getProducts(params?: {
   brandSlugs?: string[];
   categorySlug?: string;
   collectionSlug?: string;
+  collectionSlugs?: string[];
   minPrice?: number;
   maxPrice?: number;
   ramGb?: number[];
@@ -100,6 +101,9 @@ export async function getProducts(params?: {
   }
   if (params?.categorySlug) searchParams.set("categorySlug", params.categorySlug);
   if (params?.collectionSlug) searchParams.set("collectionSlug", params.collectionSlug);
+  if (params?.collectionSlugs && params.collectionSlugs.length > 0) {
+    searchParams.set("collectionSlugs", params.collectionSlugs.join(","));
+  }
   if (params?.minPrice !== undefined) searchParams.set("minPrice", String(params.minPrice));
   if (params?.maxPrice !== undefined) searchParams.set("maxPrice", String(params.maxPrice));
   if (params?.ramGb && params.ramGb.length > 0) {

@@ -30,21 +30,25 @@ export function FacetSidebar({ facets, highestPrice, onApply, isMobileDrawer }: 
     setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
 
-  // Extract current query params
-  const currentCollectionSlug = searchParams.get("collectionSlug") ?? "";
+  // Extract current query params (Supporting multi-select collections)
+  const currentCollectionSlugs = searchParams.get("collectionSlugs")
+    ? searchParams.get("collectionSlugs")!.split(",").filter(Boolean)
+    : searchParams.get("collectionSlug")
+    ? [searchParams.get("collectionSlug")!]
+    : [];
 
   const currentBrandSlugs = searchParams.get("brandSlugs")
-    ? searchParams.get("brandSlugs")!.split(",")
+    ? searchParams.get("brandSlugs")!.split(",").filter(Boolean)
     : searchParams.get("brandSlug")
     ? [searchParams.get("brandSlug")!]
     : [];
 
   const currentRamGbs = searchParams.get("ramGb")
-    ? searchParams.get("ramGb")!.split(",").map(Number)
+    ? searchParams.get("ramGb")!.split(",").map(Number).filter(Boolean)
     : [];
 
   const currentStorageGbs = searchParams.get("storageGb")
-    ? searchParams.get("storageGb")!.split(",").map(Number)
+    ? searchParams.get("storageGb")!.split(",").map(Number).filter(Boolean)
     : [];
 
   const currentInStockOnly = searchParams.get("inStockOnly") === "true";
@@ -69,8 +73,13 @@ export function FacetSidebar({ facets, highestPrice, onApply, isMobileDrawer }: 
   }
 
   const toggleCollection = (slug: string) => {
+    const exists = currentCollectionSlugs.includes(slug);
+    const updated = exists
+      ? currentCollectionSlugs.filter((s) => s !== slug)
+      : [...currentCollectionSlugs, slug];
     updateParams({
-      collectionSlug: currentCollectionSlug === slug ? undefined : slug,
+      collectionSlugs: updated.length > 0 ? updated.join(",") : undefined,
+      collectionSlug: undefined, // Clear single collectionSlug in favor of multi
     });
   };
 
@@ -195,7 +204,7 @@ export function FacetSidebar({ facets, highestPrice, onApply, isMobileDrawer }: 
           {openSections.collection && (
             <div className="mt-4 space-y-3.5">
               {facets.collections.map((col) => {
-                const isChecked = currentCollectionSlug === col.slug;
+                const isChecked = currentCollectionSlugs.includes(col.slug);
                 const isDisabled = col.count === 0 && !isChecked;
                 return (
                   <label

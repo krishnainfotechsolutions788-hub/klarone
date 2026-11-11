@@ -28,6 +28,7 @@ interface LaptopsPageProps {
     brandSlugs?: string | string[];
     categorySlug?: string | string[];
     collectionSlug?: string | string[];
+    collectionSlugs?: string | string[];
     minPrice?: string | string[];
     maxPrice?: string | string[];
     ramGb?: string | string[];
@@ -74,6 +75,7 @@ export default async function LaptopsPage({
   const search = getSingleValue(params.search);
   const categorySlug = getSingleValue(params.categorySlug);
   const collectionSlug = getSingleValue(params.collectionSlug);
+  const collectionSlugs = getArrayValues(params.collectionSlugs);
   const brandSlug = getSingleValue(params.brandSlug);
   const brandSlugs = getArrayValues(params.brandSlugs);
   const minPrice = params.minPrice ? Number(getSingleValue(params.minPrice)) : undefined;
@@ -84,11 +86,17 @@ export default async function LaptopsPage({
   const sortBy = (getSingleValue(params.sortBy) as "featured" | "price-asc" | "price-desc" | "newest") || "featured";
   const page = getPageNumber(params.page);
 
+  // Combine single collectionSlug with multi collectionSlugs seamlessly
+  const allActiveCollectionSlugs = [
+    ...(collectionSlug ? [collectionSlug] : []),
+    ...collectionSlugs,
+  ].filter((v, i, a) => a.indexOf(v) === i);
+
   const [categories, collections, brands, facets, productsResponse] = await Promise.all([
     getCategories().catch(() => []),
     getCollections().catch(() => []),
     getBrands().catch(() => []),
-    getFacets({ categorySlug, collectionSlug }).catch(() => ({
+    getFacets({ categorySlug }).catch(() => ({
       brands: [],
       collections: [],
       priceRange: { min: 0, max: 350000 },
@@ -101,7 +109,8 @@ export default async function LaptopsPage({
       brandSlug,
       brandSlugs: brandSlugs.length > 0 ? brandSlugs : undefined,
       categorySlug,
-      collectionSlug,
+      collectionSlug: allActiveCollectionSlugs.length === 1 ? allActiveCollectionSlugs[0] : undefined,
+      collectionSlugs: allActiveCollectionSlugs.length > 0 ? allActiveCollectionSlugs : undefined,
       minPrice,
       maxPrice,
       ramGb: ramGb.length > 0 ? ramGb : undefined,
@@ -135,9 +144,12 @@ export default async function LaptopsPage({
     const activeCat = categories.find((c) => c.slug === categorySlug);
     pageTitle = activeCat ? activeCat.name : categorySlug.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
     breadcrumbs.push({ label: pageTitle });
-  } else if (collectionSlug) {
-    const activeCol = collections.find((c) => c.slug === collectionSlug);
-    pageTitle = activeCol ? activeCol.title : collectionSlug.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+  } else if (allActiveCollectionSlugs.length === 1) {
+    const activeCol = collections.find((c) => c.slug === allActiveCollectionSlugs[0]);
+    pageTitle = activeCol ? activeCol.title : allActiveCollectionSlugs[0].split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+    breadcrumbs.push({ label: pageTitle });
+  } else if (allActiveCollectionSlugs.length > 1) {
+    pageTitle = `${allActiveCollectionSlugs.length} Collections`;
     breadcrumbs.push({ label: pageTitle });
   } else if (brandSlug) {
     const activeBrand = brands.find((b) => b.slug === brandSlug);

@@ -19,6 +19,7 @@ export class CatalogueController {
     @Query("brandSlugs") brandSlugs?: string | string[],
     @Query("categorySlug") categorySlug?: string,
     @Query("collectionSlug") collectionSlug?: string,
+    @Query("collectionSlugs") collectionSlugs?: string | string[],
     @Query("minPrice") minPrice?: string,
     @Query("maxPrice") maxPrice?: string,
     @Query("ramGb") ramGb?: string | string[],
@@ -46,6 +47,7 @@ export class CatalogueController {
       brandSlugs: parseStringArray(brandSlugs),
       categorySlug,
       collectionSlug,
+      collectionSlugs: parseStringArray(collectionSlugs),
       minPrice: minPrice ? Number(minPrice) : undefined,
       maxPrice: maxPrice ? Number(maxPrice) : undefined,
       ramGb: parseNumberArray(ramGb),
@@ -64,7 +66,6 @@ export class CatalogueController {
   ) {
     return this.catalogueService.findProductFacets({
       categorySlug,
-      collectionSlug,
     });
   }
 
