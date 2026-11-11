@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { CatalogueFacets } from "../../types/catalogue";
 
 interface FacetSidebarProps {
@@ -52,11 +52,30 @@ export function FacetSidebar({ facets, highestPrice, onApply, isMobileDrawer }: 
     : [];
 
   const currentInStockOnly = searchParams.get("inStockOnly") === "true";
-  const currentMinPrice = searchParams.get("minPrice") ?? "0";
-  const currentMaxPrice = searchParams.get("maxPrice") ?? String(highestPrice || 350000);
+  const urlMinPrice = searchParams.get("minPrice") ?? "";
+  const urlMaxPrice = searchParams.get("maxPrice") ?? "";
 
-  const [minPriceInput, setMinPriceInput] = useState(currentMinPrice);
-  const [maxPriceInput, setMaxPriceInput] = useState(currentMaxPrice);
+  const effectiveMaxPrice = highestPrice > 0 ? highestPrice : 350000;
+
+  // Local state for smooth slider dragging and responsive typing
+  const [minPriceInput, setMinPriceInput] = useState<number>(() => {
+    const val = Number(urlMinPrice);
+    return !Number.isNaN(val) && val > 0 ? Math.min(val, effectiveMaxPrice) : 0;
+  });
+
+  const [maxPriceInput, setMaxPriceInput] = useState<number>(() => {
+    const val = Number(urlMaxPrice);
+    return !Number.isNaN(val) && val > 0 ? Math.min(val, effectiveMaxPrice) : effectiveMaxPrice;
+  });
+
+  // Keep local state in sync when URL query params or highestPrice change
+  useEffect(() => {
+    const minVal = Number(urlMinPrice);
+    setMinPriceInput(!Number.isNaN(minVal) && minVal > 0 ? Math.min(minVal, effectiveMaxPrice) : 0);
+
+    const maxVal = Number(urlMaxPrice);
+    setMaxPriceInput(!Number.isNaN(maxVal) && maxVal > 0 ? Math.min(maxVal, effectiveMaxPrice) : effectiveMaxPrice);
+  }, [urlMinPrice, urlMaxPrice, effectiveMaxPrice]);
 
   function updateParams(updates: Record<string, string | undefined>) {
     const params = new URLSearchParams(searchParams.toString());
@@ -71,6 +90,62 @@ export function FacetSidebar({ facets, highestPrice, onApply, isMobileDrawer }: 
     const query = params.toString();
     router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
   }
+
+  // Ref to track debounce timer for slider drags
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const commitPriceChange = (minVal: number, maxVal: number) => {
+    const safeMin = Math.max(0, Math.min(minVal, maxVal));
+    const safeMax = Math.min(effectiveMaxPrice, Math.max(safeMin, maxVal));
+
+    updateParams({
+      minPrice: safeMin > 0 ? String(safeMin) : undefined,
+      maxPrice: safeMax < effectiveMaxPrice ? String(safeMax) : undefined,
+    });
+  };
+
+  const debouncedCommitPriceChange = (minVal: number, maxVal: number) => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    debounceTimerRef.current = setTimeout(() => {
+      commitPriceChange(minVal, maxVal);
+    }, 450);
+  };
+
+  const handleMinSliderChange = (newMin: number) => {
+    const clamped = Math.min(Math.max(0, newMin), maxPriceInput);
+    setMinPriceInput(clamped);
+    debouncedCommitPriceChange(clamped, maxPriceInput);
+  };
+
+  const handleMaxSliderChange = (newMax: number) => {
+    const clamped = Math.max(Math.min(effectiveMaxPrice, newMax), minPriceInput);
+    setMaxPriceInput(clamped);
+    debouncedCommitPriceChange(minPriceInput, clamped);
+  };
+
+  const handleMinInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value === "" ? 0 : Number(e.target.value);
+    if (!Number.isNaN(val)) {
+      setMinPriceInput(val);
+    }
+  };
+
+  const handleMaxInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value === "" ? effectiveMaxPrice : Number(e.target.value);
+    if (!Number.isNaN(val)) {
+      setMaxPriceInput(val);
+    }
+  };
+
+  const handleInputBlurOrEnter = () => {
+    const safeMin = Math.max(0, Math.min(minPriceInput, maxPriceInput));
+    const safeMax = Math.min(effectiveMaxPrice, Math.max(safeMin, maxPriceInput));
+    setMinPriceInput(safeMin);
+    setMaxPriceInput(safeMax);
+    commitPriceChange(safeMin, safeMax);
+  };
 
   const toggleCollection = (slug: string) => {
     const exists = currentCollectionSlugs.includes(slug);
@@ -120,13 +195,6 @@ export function FacetSidebar({ facets, highestPrice, onApply, isMobileDrawer }: 
     } else {
       updateParams({ inStockOnly: undefined });
     }
-  };
-
-  const applyPrice = () => {
-    updateParams({
-      minPrice: Number(minPriceInput) > 0 ? minPriceInput : undefined,
-      maxPrice: Number(maxPriceInput) < highestPrice ? maxPriceInput : undefined,
-    });
   };
 
   return (
@@ -259,42 +327,77 @@ export function FacetSidebar({ facets, highestPrice, onApply, isMobileDrawer }: 
         {openSections.price && (
           <div className="mt-4 space-y-4">
             <p className="text-[14px] text-stone-500 font-normal">
-              The highest price is ₹{highestPrice.toLocaleString("en-IN")}
+              The highest price is ₹{effectiveMaxPrice.toLocaleString("en-IN")}
             </p>
 
-            {/* Slider track visualization */}
-            <div className="relative flex items-center py-1.5">
-              <div className="h-1.5 w-full rounded-full bg-stone-200">
-                <div className="h-1.5 rounded-full bg-slate-900" style={{ width: "100%" }} />
+            {/* Interactive Dual-Thumb Range Slider */}
+            <div className="relative flex items-center h-6 select-none">
+              {/* Background Track */}
+              <div className="absolute h-1.5 w-full rounded-full bg-stone-200">
+                {/* Active Highlight Range Track */}
+                <div
+                  className="absolute h-1.5 rounded-full bg-slate-900 transition-all duration-75"
+                  style={{
+                    left: `${(minPriceInput / effectiveMaxPrice) * 100}%`,
+                    right: `${100 - (maxPriceInput / effectiveMaxPrice) * 100}%`,
+                  }}
+                />
               </div>
-              <div className="absolute left-0 h-4 w-4 rounded-full border-2 border-slate-900 bg-white shadow-sm" />
-              <div className="absolute right-0 h-4 w-4 rounded-full border-2 border-slate-900 bg-white shadow-sm" />
+
+              {/* Min Range Input */}
+              <input
+                type="range"
+                min={0}
+                max={effectiveMaxPrice}
+                step={100}
+                value={minPriceInput}
+                onChange={(e) => handleMinSliderChange(Number(e.target.value))}
+                className="dual-range-input z-20"
+                aria-label="Minimum price"
+              />
+
+              {/* Max Range Input */}
+              <input
+                type="range"
+                min={0}
+                max={effectiveMaxPrice}
+                step={100}
+                value={maxPriceInput}
+                onChange={(e) => handleMaxSliderChange(Number(e.target.value))}
+                className="dual-range-input z-20"
+                aria-label="Maximum price"
+              />
             </div>
 
+            {/* Min / Max Numeric Price Inputs */}
             <div className="flex items-center gap-3 pt-1">
-              <div className="flex flex-1 items-center rounded-2xl bg-[#f0f2ee] px-4 py-3">
-                <span className="text-[14px] text-stone-500 mr-2 font-normal">₹</span>
+              <div className="flex flex-1 items-center rounded-2xl bg-[#f0f2ee] px-4 py-3 focus-within:ring-2 focus-within:ring-slate-900/10 transition-shadow">
+                <span className="text-[14px] text-stone-500 mr-2 font-normal select-none">₹</span>
                 <input
                   type="number"
-                  value={minPriceInput}
-                  onChange={(e) => setMinPriceInput(e.target.value)}
-                  onBlur={applyPrice}
-                  onKeyDown={(e) => e.key === "Enter" && applyPrice()}
-                  className="w-full bg-transparent text-[14px] text-slate-900 outline-none"
+                  min={0}
+                  max={effectiveMaxPrice}
+                  value={minPriceInput === 0 ? "" : minPriceInput}
+                  onChange={handleMinInputChange}
+                  onBlur={handleInputBlurOrEnter}
+                  onKeyDown={(e) => e.key === "Enter" && handleInputBlurOrEnter()}
+                  className="w-full bg-transparent text-[14px] font-medium text-slate-900 outline-none placeholder:text-stone-400"
                   placeholder="0"
                 />
               </div>
 
-              <div className="flex flex-1 items-center rounded-2xl bg-[#f0f2ee] px-4 py-3">
-                <span className="text-[14px] text-stone-500 mr-2 font-normal">₹</span>
+              <div className="flex flex-1 items-center rounded-2xl bg-[#f0f2ee] px-4 py-3 focus-within:ring-2 focus-within:ring-slate-900/10 transition-shadow">
+                <span className="text-[14px] text-stone-500 mr-2 font-normal select-none">₹</span>
                 <input
                   type="number"
-                  value={maxPriceInput}
-                  onChange={(e) => setMaxPriceInput(e.target.value)}
-                  onBlur={applyPrice}
-                  onKeyDown={(e) => e.key === "Enter" && applyPrice()}
-                  className="w-full bg-transparent text-[14px] text-slate-900 outline-none"
-                  placeholder={String(highestPrice)}
+                  min={0}
+                  max={effectiveMaxPrice}
+                  value={maxPriceInput === effectiveMaxPrice ? "" : maxPriceInput}
+                  onChange={handleMaxInputChange}
+                  onBlur={handleInputBlurOrEnter}
+                  onKeyDown={(e) => e.key === "Enter" && handleInputBlurOrEnter()}
+                  className="w-full bg-transparent text-[14px] font-medium text-slate-900 outline-none placeholder:text-stone-400"
+                  placeholder={String(effectiveMaxPrice)}
                 />
               </div>
             </div>
