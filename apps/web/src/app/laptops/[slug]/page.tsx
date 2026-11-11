@@ -116,7 +116,7 @@ export default async function ProductPage({
       <StorefrontHeader />
 
       {/* 2. Main Product Content (Offset top for floating navbar) */}
-      <main className="pt-[76px] sm:pt-20 md:pt-24">
+      <main className="pt-16 sm:pt-20 md:pt-24">
         <ProductExperienceView product={product} />
       </main>
 

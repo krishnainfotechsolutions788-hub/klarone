@@ -445,7 +445,7 @@ export function ProductExperienceView({ product }: ProductViewProps) {
   return (
     <div className="relative w-full bg-white text-neutral-900 pb-28">
       {/* Main PDP 2-Column Grid (Aligned to the same horizontal top line) */}
-      <div className="mx-auto max-w-7xl px-4 pt-6 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 pt-4 sm:pt-6 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-start">
           
           {/* LEFT COLUMN: Modern Gallery (Mobile: Single Hero + Horizontal Thumbnails; Desktop: Vertical Thumbnails + Full Cards, Sticky) */}
@@ -478,24 +478,13 @@ export function ProductExperienceView({ product }: ProductViewProps) {
 
             {/* Mobile View: Single Featured Hero Image + Horizontal Thumbnails directly below (matching reference) */}
             <div className="flex md:hidden flex-col gap-3 w-full">
-              {/* Featured Large Hero Image with Zoom Search Icon */}
+              {/* Featured Large Hero Image */}
               <div className="relative w-full min-h-[340px] sm:min-h-[420px] rounded-2xl bg-[#f8f9fa] overflow-hidden border border-neutral-200/80 p-6 sm:p-8 shadow-xs flex items-center justify-center">
                 <img
                   src={galleryImages[activeImageIndex] || galleryImages[0]}
                   alt={`${product.name} active preview`}
                   className="w-full h-auto max-h-[380px] object-contain block select-none"
                 />
-                
-                {/* Floating Search/Zoom Icon pill in top-right */}
-                <button
-                  type="button"
-                  aria-label="Zoom image"
-                  className="absolute top-3.5 right-3.5 h-9 w-9 rounded-full bg-white/95 backdrop-blur-xs shadow-md border border-black/5 flex items-center justify-center text-neutral-800 transition active:scale-95 z-10"
-                >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </button>
               </div>
 
               {/* Horizontal Thumbnails Row */}
