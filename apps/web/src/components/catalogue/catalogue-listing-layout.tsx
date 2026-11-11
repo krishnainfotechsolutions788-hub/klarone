@@ -6,6 +6,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ProductCard } from "./product-card";
 import { FacetSidebar } from "./facet-sidebar";
 import { CatalogueToolbar } from "./catalogue-toolbar";
+import { ActiveFiltersBar } from "./active-filters-bar";
 import { CategoryCarousel } from "./category-carousel";
 import type {
   CatalogueCategory,
@@ -86,8 +87,8 @@ export function CatalogueListingLayout({
         ))}
       </nav>
 
-      {/* 2. TOOLBAR (FILTERS BUTTON, COUNT, SORT BY, VIEW AS TOGGLE) */}
-      <div className="mb-6 sm:mb-8">
+      {/* 2. TOOLBAR (FILTERS BUTTON, COUNT, SEARCH INPUT) */}
+      <div className="mb-4 sm:mb-6">
         <CatalogueToolbar
           total={total}
           viewColumns={viewColumns}
@@ -102,6 +103,9 @@ export function CatalogueListingLayout({
             }
           }}
         />
+
+        {/* Active Applied Filter Badges (Visible on both Mobile and Desktop) */}
+        <ActiveFiltersBar facets={facets} />
       </div>
 
       {/* 3. MAIN CONTENT (LEFT ACCORDION SIDEBAR ON DESKTOP + RIGHT 2-COL / 3-COL GRID) */}
