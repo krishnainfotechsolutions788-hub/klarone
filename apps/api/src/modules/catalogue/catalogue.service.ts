@@ -5474,4 +5474,118 @@ export class CatalogueService {
 
     return { id: variantId.toString(), deleted: true };
   }
+
+  /**
+   * Fast auto-complete / search suggestions query for global storefront search modal
+   */
+  async searchSuggestions(query: string, limit = 6) {
+    const q = query.trim();
+    if (!q) {
+      return { query: "", products: [], brands: [], categories: [] };
+    }
+
+    // Split search query into search tokens for flexible multi-word matching (e.g. "dell 16gb", "macbook air")
+    const terms = q.split(/\s+/).filter(Boolean);
+
+    // 1. Search Published Products
+    const products = await this.prisma.product.findMany({
+      where: {
+        status: "PUBLISHED",
+        AND: terms.map((term) => ({
+          OR: [
+            { name: { contains: term, mode: "insensitive" } },
+            { shortDescription: { contains: term, mode: "insensitive" } },
+            { brand: { name: { contains: term, mode: "insensitive" } } },
+            { category: { name: { contains: term, mode: "insensitive" } } },
+            {
+              variants: {
+                some: {
+                  status: "ACTIVE",
+                  OR: [
+                    { variantName: { contains: term, mode: "insensitive" } },
+                    { sku: { contains: term, mode: "insensitive" } },
+                    { operatingSystem: { contains: term, mode: "insensitive" } },
+                  ],
+                },
+              },
+            },
+          ],
+        })),
+      },
+      take: limit,
+      orderBy: { name: "asc" },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        brand: {
+          select: { id: true, name: true, slug: true },
+        },
+        category: {
+          select: { id: true, name: true, slug: true },
+        },
+        media: {
+          where: { isPrimary: true },
+          take: 1,
+          select: { url: true, altText: true },
+        },
+        variants: {
+          where: { status: "ACTIVE" },
+          take: 1,
+          orderBy: { sellingPrice: "asc" },
+          select: {
+            id: true,
+            sellingPrice: true,
+            compareAtPrice: true,
+            ramGb: true,
+            storageGb: true,
+            variantName: true,
+          },
+        },
+      },
+    });
+
+    // 2. Search Matching Brands
+    const brands = await this.prisma.brand.findMany({
+      where: {
+        status: "ACTIVE",
+        name: { contains: q, mode: "insensitive" },
+      },
+      take: 4,
+      select: { id: true, name: true, slug: true },
+    });
+
+    // 3. Search Matching Categories
+    const categories = await this.prisma.category.findMany({
+      where: {
+        status: "ACTIVE",
+        name: { contains: q, mode: "insensitive" },
+      },
+      take: 4,
+      select: { id: true, name: true, slug: true },
+    });
+
+    return {
+      query: q,
+      products: products.map((p) => {
+        const primaryVariant = p.variants[0];
+        const primaryMedia = p.media[0];
+        return {
+          id: p.id.toString(),
+          name: p.name,
+          slug: p.slug,
+          brandName: p.brand?.name ?? null,
+          brandSlug: p.brand?.slug ?? null,
+          categoryName: p.category?.name ?? null,
+          imageUrl: primaryMedia?.url ?? null,
+          sellingPrice: primaryVariant ? Number(primaryVariant.sellingPrice) : null,
+          compareAtPrice: primaryVariant?.compareAtPrice ? Number(primaryVariant.compareAtPrice) : null,
+          ramGb: primaryVariant?.ramGb ?? null,
+          storageGb: primaryVariant?.storageGb ?? null,
+        };
+      }),
+      brands,
+      categories,
+    };
+  }
 }

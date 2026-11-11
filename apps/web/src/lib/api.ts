@@ -168,3 +168,35 @@ export async function startRecommendation(params: {
     { revalidate: 0 },
   );
 }
+
+export interface SearchSuggestionItem {
+  id: string;
+  name: string;
+  slug: string;
+  brandName: string | null;
+  brandSlug: string | null;
+  categoryName: string | null;
+  imageUrl: string | null;
+  sellingPrice: number | null;
+  compareAtPrice: number | null;
+  ramGb: number | null;
+  storageGb: number | null;
+}
+
+export interface SearchSuggestionsResponse {
+  query: string;
+  products: SearchSuggestionItem[];
+  brands: Array<{ id: number; name: string; slug: string }>;
+  categories: Array<{ id: number; name: string; slug: string }>;
+}
+
+export async function getSearchSuggestions(query: string, limit = 6): Promise<SearchSuggestionsResponse> {
+  if (!query.trim()) {
+    return { query: "", products: [], brands: [], categories: [] };
+  }
+  return apiFetch<SearchSuggestionsResponse>(
+    `/search/suggestions?q=${encodeURIComponent(query.trim())}&limit=${limit}`,
+    undefined,
+    { revalidate: 30 },
+  );
+}

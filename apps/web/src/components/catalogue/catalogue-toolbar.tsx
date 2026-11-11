@@ -22,6 +22,15 @@ export function CatalogueToolbar({
   const searchParams = useSearchParams();
 
   const currentSort = searchParams.get("sortBy") ?? "featured";
+  const currentSearch = searchParams.get("search") ?? "";
+
+  const handleClearSearch = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("search");
+    params.delete("page");
+    const query = params.toString();
+    router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
+  };
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -39,7 +48,7 @@ export function CatalogueToolbar({
   return (
     <div className="flex items-center justify-between border-b border-stone-200/80 pb-4 sm:pb-6">
       {/* Left: Filters Pill Button matching user reference */}
-      <div className="flex items-center gap-3 sm:gap-5">
+      <div className="flex items-center gap-3 sm:gap-5 flex-wrap">
         <button
           type="button"
           onClick={onToggleFilters}
@@ -65,6 +74,21 @@ export function CatalogueToolbar({
         <span className="hidden sm:inline text-sm font-medium text-stone-500">
           {total} {total === 1 ? "product" : "products"}
         </span>
+
+        {/* Active Search Query Badge if filtered */}
+        {currentSearch && (
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-xs font-semibold text-emerald-950">
+            <span>Query: &ldquo;{currentSearch}&rdquo;</span>
+            <button
+              type="button"
+              onClick={handleClearSearch}
+              className="hover:text-emerald-700 font-bold ml-1 text-sm leading-none"
+              title="Clear search query"
+            >
+              ×
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Right on mobile: Product count like in the reference image ("18 products") */}
@@ -72,7 +96,7 @@ export function CatalogueToolbar({
         {total} {total === 1 ? "product" : "products"}
       </span>
 
-            {/* Right on desktop: Sort By */}
+      {/* Right on desktop: Sort By */}
       <div className="hidden sm:flex items-center gap-6">
         <div className="flex items-center gap-2.5">
           <span className="text-stone-500 text-sm font-medium">Sort by</span>

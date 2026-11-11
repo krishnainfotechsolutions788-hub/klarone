@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { PrismaModule } from "../../database/prisma.module";
 import { StaffAuthModule } from "../staff-auth/staff-auth.module";
 import { CatalogueController } from "./catalogue.controller";
+import { SearchController } from "./search.controller";
 import { StaffCatalogueController } from "./staff-catalogue.controller";
 import { StaffCatalogueTaxonomyController } from "./staff-catalogue-taxonomy.controller";
 import { StaffCatalogueOptionsController } from "./staff-catalogue-options.controller";
@@ -15,6 +16,7 @@ import { StaffProductMediaService } from "./staff-product-media.service";
   imports: [PrismaModule, StaffAuthModule],
   controllers: [
     CatalogueController,
+    SearchController,
     StaffCatalogueController,
     StaffCatalogueTaxonomyController,
     StaffCatalogueOptionsController,

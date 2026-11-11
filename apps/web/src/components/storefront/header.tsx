@@ -8,6 +8,7 @@ import { motion, useScroll, useTransform, useSpring, AnimatePresence } from "mot
 import { useCustomerAuth } from "../auth/customer-auth-provider";
 import { useCart } from "../cart/cart-provider";
 import { getBrands, getCategories, getCollections } from "../../lib/api";
+import { SearchModal } from "./search-modal";
 import type {
   CatalogueBrand,
   CatalogueCategory,
@@ -22,6 +23,19 @@ export function StorefrontHeader() {
   const [brands, setBrands] = useState<CatalogueBrand[]>([]);
   const { customer, isAuthenticated } = useCustomerAuth();
   const { itemCount } = useCart();
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  // Global Ctrl+K / Cmd+K listener to open search
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setIsSearchOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -180,8 +194,23 @@ export function StorefrontHeader() {
               </Link>
             </div>
 
-            {/* Right Column: Account, Cart */}
-            <div className="flex items-center justify-end gap-2.5 sm:gap-4">
+            {/* Right Column: Search, Account, Cart */}
+            <div className="flex items-center justify-end gap-1.5 sm:gap-3">
+              {/* Search Trigger Button on mobile */}
+              <button
+                type="button"
+                onClick={() => setIsSearchOpen(true)}
+                aria-label="Search laptops"
+                className="flex h-9 w-9 items-center justify-center rounded-lg text-emerald-100/90 transition hover:text-white active:scale-95"
+              >
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+                  />
+                </svg>
+              </button>
 
               {/* Account Icon on mobile and tablet */}
               <Link
@@ -319,8 +348,22 @@ export function StorefrontHeader() {
               </Link>
             </div>
 
-            {/* Right Column: Action Icons */}
-            <div className="flex items-center justify-end gap-5">
+            {/* Right Column: Search Pill, Account, Cart */}
+            <div className="flex items-center justify-end gap-3.5">
+              {/* Desktop Search Trigger Pill */}
+              <button
+                type="button"
+                onClick={() => setIsSearchOpen(true)}
+                className="inline-flex items-center gap-2.5 rounded-full bg-emerald-950/70 border border-emerald-800/80 px-3.5 py-1.5 text-xs text-emerald-100/85 hover:text-white hover:border-emerald-700 hover:bg-emerald-900/60 transition active:scale-95"
+              >
+                <svg className="h-3.5 w-3.5 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                </svg>
+                <span className="font-medium">Search laptops...</span>
+                <kbd className="hidden sm:inline-flex items-center text-[10px] font-mono px-1.5 py-0.2 rounded-sm bg-emerald-900/90 text-emerald-300/80 border border-emerald-700/50">
+                  ⌘K
+                </kbd>
+              </button>
 
               {/* Customer Account Icon */}
               <Link
@@ -884,6 +927,9 @@ export function StorefrontHeader() {
         </div>
       )}
     </AnimatePresence>
+
+    {/* Global Interactive Search Modal (⌘K / Ctrl+K) */}
+    <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
   </>
   );
 }
