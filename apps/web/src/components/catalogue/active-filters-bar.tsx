@@ -6,16 +6,16 @@ import type { CatalogueFacets } from "../../types/catalogue";
 
 interface ActiveFiltersBarProps {
   facets: CatalogueFacets;
+  total?: number;
 }
 
 interface FilterBadge {
   id: string;
   label: string;
-  category: string;
   onRemove: () => void;
 }
 
-export function ActiveFiltersBar({ facets }: ActiveFiltersBarProps) {
+export function ActiveFiltersBar({ facets, total }: ActiveFiltersBarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -66,7 +66,6 @@ export function ActiveFiltersBar({ facets }: ActiveFiltersBarProps) {
   if (currentSearch) {
     badges.push({
       id: "search",
-      category: "Search",
       label: `"${currentSearch}"`,
       onRemove: () => removeParam({ search: undefined }),
     });
@@ -77,7 +76,6 @@ export function ActiveFiltersBar({ facets }: ActiveFiltersBarProps) {
     const matchedCol = facets.collections?.find((c) => c.slug === currentCollectionSlug);
     badges.push({
       id: `collection-${currentCollectionSlug}`,
-      category: "Collection",
       label: matchedCol ? matchedCol.title : currentCollectionSlug,
       onRemove: () => removeParam({ collectionSlug: undefined }),
     });
@@ -88,7 +86,6 @@ export function ActiveFiltersBar({ facets }: ActiveFiltersBarProps) {
     const matchedBrand = facets.brands.find((b) => b.slug === slug);
     badges.push({
       id: `brand-${slug}`,
-      category: "Brand",
       label: matchedBrand ? matchedBrand.name : slug,
       onRemove: () => {
         const remaining = currentBrandSlugs.filter((s) => s !== slug);
@@ -104,7 +101,6 @@ export function ActiveFiltersBar({ facets }: ActiveFiltersBarProps) {
   currentRamGbs.forEach((ram) => {
     badges.push({
       id: `ram-${ram}`,
-      category: "RAM",
       label: `${ram}GB RAM`,
       onRemove: () => {
         const remaining = currentRamGbs.filter((r) => r !== ram);
@@ -120,7 +116,6 @@ export function ActiveFiltersBar({ facets }: ActiveFiltersBarProps) {
     const label = Number(storage) >= 1024 ? `${Number(storage) / 1024}TB SSD` : `${storage}GB SSD`;
     badges.push({
       id: `storage-${storage}`,
-      category: "Storage",
       label,
       onRemove: () => {
         const remaining = currentStorageGbs.filter((s) => s !== storage);
@@ -135,7 +130,6 @@ export function ActiveFiltersBar({ facets }: ActiveFiltersBarProps) {
   if (currentInStockOnly) {
     badges.push({
       id: "instock",
-      category: "Status",
       label: "In Stock Only",
       onRemove: () => removeParam({ inStockOnly: undefined }),
     });
@@ -147,44 +141,58 @@ export function ActiveFiltersBar({ facets }: ActiveFiltersBarProps) {
     const maxFormatted = currentMaxPrice ? `₹${Number(currentMaxPrice).toLocaleString("en-IN")}` : "Max";
     badges.push({
       id: "price-range",
-      category: "Price",
       label: `${minFormatted} – ${maxFormatted}`,
       onRemove: () => removeParam({ minPrice: undefined, maxPrice: undefined }),
     });
   }
 
+  // When no filters are applied, show subtle product count on mobile only
   if (badges.length === 0) {
+    if (total !== undefined) {
+      return (
+        <div className="flex sm:hidden items-center justify-between pt-2 text-[11px] font-medium text-stone-400 tracking-tight">
+          <span>{total} {total === 1 ? "product" : "products"} available</span>
+        </div>
+      );
+    }
     return null;
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 pt-2.5 pb-1">
-      <span className="text-xs font-semibold uppercase tracking-wider text-stone-400 mr-1 hidden sm:inline">
-        Active:
-      </span>
+    <div className="flex items-center justify-between gap-2 pt-2.5 sm:pt-3">
+      {/* Horizontally scrollable pill container on mobile, flex-wrap on desktop */}
+      <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 min-w-0 flex-1">
+        {total !== undefined && (
+          <span className="text-[11px] font-medium text-stone-400 shrink-0 hidden sm:inline mr-1">
+            {total} {total === 1 ? "product" : "products"}:
+          </span>
+        )}
 
-      {badges.map((badge) => (
-        <span
-          key={badge.id}
-          className="group inline-flex items-center gap-1.5 rounded-full border border-stone-200/90 bg-stone-100/80 px-2.5 py-1 text-xs font-medium text-stone-800 transition-all hover:border-stone-400 hover:bg-stone-200/80"
-        >
-          <span className="text-stone-500 font-normal">{badge.category}:</span>
-          <span className="font-semibold text-slate-900">{badge.label}</span>
-          <button
-            type="button"
-            onClick={badge.onRemove}
-            aria-label={`Remove filter ${badge.label}`}
-            className="ml-0.5 -mr-1 flex h-4 w-4 items-center justify-center rounded-full text-stone-400 hover:text-stone-900 hover:bg-stone-300 transition-colors text-xs font-bold"
+        {badges.map((badge) => (
+          <span
+            key={badge.id}
+            className="group inline-flex items-center gap-1.5 rounded-full border border-stone-200/80 bg-stone-100/90 pl-2.5 pr-1.5 py-0.5 sm:py-1 text-[11px] sm:text-xs font-medium text-slate-800 shrink-0 transition-colors hover:border-stone-300"
           >
-            ×
-          </button>
-        </span>
-      ))}
+            <span className="truncate max-w-[150px] sm:max-w-[200px] font-semibold text-slate-900">
+              {badge.label}
+            </span>
+            <button
+              type="button"
+              onClick={badge.onRemove}
+              aria-label={`Remove filter ${badge.label}`}
+              className="flex h-4 w-4 items-center justify-center rounded-full text-stone-400 hover:text-stone-900 hover:bg-stone-200 transition-colors text-[11px] font-bold"
+            >
+              ×
+            </button>
+          </span>
+        ))}
+      </div>
 
+      {/* Clear all action link */}
       <button
         type="button"
         onClick={clearAllFilters}
-        className="ml-1 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold text-rose-600 hover:text-rose-700 hover:bg-rose-50 transition-colors"
+        className="shrink-0 text-[11px] sm:text-xs font-semibold text-stone-500 hover:text-slate-950 transition-colors underline underline-offset-2 py-0.5 px-1"
       >
         Clear all
       </button>

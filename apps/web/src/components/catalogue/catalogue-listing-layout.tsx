@@ -102,7 +102,7 @@ export function CatalogueListingLayout({
       </nav>
 
       {/* 2. TOOLBAR (FILTERS BUTTON, COUNT, SEARCH INPUT) */}
-      <div className="mb-4 sm:mb-6">
+      <div className="mb-4 sm:mb-6 border-b border-stone-200/70 pb-3 sm:pb-4">
         <CatalogueToolbar
           total={total}
           viewColumns={viewColumns}
@@ -119,7 +119,7 @@ export function CatalogueListingLayout({
         />
 
         {/* Active Applied Filter Badges (Visible on both Mobile and Desktop) */}
-        <ActiveFiltersBar facets={facets} />
+        <ActiveFiltersBar facets={facets} total={total} />
       </div>
 
       {/* 3. MAIN CONTENT (LEFT ACCORDION SIDEBAR ON DESKTOP + RIGHT 2-COL / 3-COL GRID) */}
