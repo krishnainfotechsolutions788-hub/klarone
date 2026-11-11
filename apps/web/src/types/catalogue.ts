@@ -115,6 +115,7 @@ export interface CatalogueProductDetail extends CatalogueProduct {
       color: string | null;
       basePrice: string;
       warrantyMonths: number | null;
+      status?: string;
       specification: Record<string, unknown> | null;
       optionValues?: Array<{
         productOptionId: string | number;

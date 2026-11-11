@@ -768,14 +768,15 @@ export function ProductExperienceView({ product }: ProductViewProps) {
 
             {/* 4. In-Stock / Out of Stock Indicator */}
             {(() => {
-              const hasInventoryRecords = activeVariant?.inventories && activeVariant.inventories.length > 0;
+              const inventories = activeVariant?.inventories;
+              const hasInventoryRecords = Array.isArray(inventories) && inventories.length > 0;
               const inventoryTotal = hasInventoryRecords
-                ? activeVariant.inventories.reduce((acc, inv) => acc + (inv.quantityAvailable || 0), 0)
+                ? inventories.reduce((acc, inv) => acc + (inv.quantityAvailable || 0), 0)
                 : null;
               
-              // Standard commerce logic: If inventory is tracked and <= 0, or variant is not active -> Out of Stock
+              // Standard commerce logic: If inventory is tracked and <= 0, or variant is explicitly inactive -> Out of Stock
               const isOutOfStock =
-                activeVariant?.status !== "ACTIVE" ||
+                (activeVariant?.status && activeVariant.status !== "ACTIVE") ||
                 (hasInventoryRecords && inventoryTotal !== null && inventoryTotal <= 0);
 
               if (isOutOfStock) {
@@ -799,12 +800,13 @@ export function ProductExperienceView({ product }: ProductViewProps) {
 
             {/* 5. Quantity Stepper + Add to Cart Button */}
             {(() => {
-              const hasInventoryRecords = activeVariant?.inventories && activeVariant.inventories.length > 0;
+              const inventories = activeVariant?.inventories;
+              const hasInventoryRecords = Array.isArray(inventories) && inventories.length > 0;
               const inventoryTotal = hasInventoryRecords
-                ? activeVariant.inventories.reduce((acc, inv) => acc + (inv.quantityAvailable || 0), 0)
+                ? inventories.reduce((acc, inv) => acc + (inv.quantityAvailable || 0), 0)
                 : null;
               const isOutOfStock =
-                activeVariant?.status !== "ACTIVE" ||
+                (activeVariant?.status && activeVariant.status !== "ACTIVE") ||
                 (hasInventoryRecords && inventoryTotal !== null && inventoryTotal <= 0);
 
               return (
