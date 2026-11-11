@@ -244,34 +244,24 @@ export function ProductExperienceView({ product }: ProductViewProps) {
     return null;
   };
 
-  // Compute unified product options list
+  // Compute unified product options list (strictly specs-based: Processor, RAM, Storage, etc. excluding Color)
   const productOptions: OptionDescriptor[] = useMemo(() => {
     if (product.options && product.options.length > 0) {
-      return product.options.map((opt) => ({
-        id: opt.id,
-        name: opt.name,
-        isColor: opt.name.toLowerCase() === "color",
-        values: opt.values.map((v) => ({
-          value: v.value,
-          hex: (v.metaobjectEntry?.fields as any)?.hex ?? null,
-        })),
-      }));
+      return product.options
+        .filter((opt) => opt.name.toLowerCase() !== "color")
+        .map((opt) => ({
+          id: opt.id,
+          name: opt.name,
+          isColor: false,
+          values: opt.values.map((v) => ({
+            value: v.value,
+            hex: (v.metaobjectEntry?.fields as any)?.hex ?? null,
+          })),
+        }));
     }
 
-    // Dynamic derivation fallback from variants
+    // Dynamic derivation fallback from variants (strictly excluding color)
     const opts: OptionDescriptor[] = [];
-
-    const colors = [
-      ...new Set(product.variants.map((v) => v.color).filter(Boolean)),
-    ] as string[];
-    if (colors.length > 0) {
-      opts.push({
-        id: "color",
-        name: "Color",
-        isColor: true,
-        values: colors.map((c) => ({ value: c })),
-      });
-    }
 
     const cpus = [
       ...new Set(
@@ -487,8 +477,11 @@ export function ProductExperienceView({ product }: ProductViewProps) {
                 />
               </div>
 
-              {/* Horizontal Thumbnails Row */}
-              <div className="flex items-center gap-2.5 overflow-x-auto pb-1 pt-0.5 no-scrollbar">
+              {/* Horizontal Thumbnails Row (Clean touch scroll without browser scrollbar track) */}
+              <div
+                className="flex items-center gap-2.5 overflow-x-auto pb-1 pt-0.5 no-scrollbar scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+                style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+              >
                 {galleryImages.map((imgSrc, idx) => {
                   const isSelected = activeImageIndex === idx;
                   return (
@@ -560,8 +553,69 @@ export function ProductExperienceView({ product }: ProductViewProps) {
               </span>
             </nav>
 
-            {/* 2. Title & Price */}
+            {/* 2. Title, Badges & Price */}
             <div>
+              {/* Product Condition & Guarantee Trust Tag */}
+              {(() => {
+                const type = product.productType?.toUpperCase();
+                const isExplicitRefurbished = type === "LAPTOP_REFURBISHED" || type === "REFURBISHED";
+                const isExplicitNew = type === "LAPTOP_NEW" || type === "NEW";
+                const isExplicitOpenBox = type === "LAPTOP_OPEN_BOX" || type === "OPEN_BOX";
+
+                const isRefurbished =
+                  isExplicitRefurbished ||
+                  (!isExplicitNew &&
+                    !isExplicitOpenBox &&
+                    (product.shortDescription?.toLowerCase().includes("refurbished") ||
+                      product.description?.toLowerCase().includes("refurbished") ||
+                      product.name?.toLowerCase().includes("refurbished")));
+
+                const isOpenBox = isExplicitOpenBox;
+
+                if (isOpenBox) {
+                  return (
+                    <div className="mb-3.5 flex flex-wrap items-center gap-2">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11.5px] font-medium tracking-wide bg-sky-50 text-sky-900 border border-sky-200/90 shadow-2xs">
+                        <svg className="w-3.5 h-3.5 text-sky-600" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M10 2a8 8 0 100 16 8 8 0 000-16zm3.707 6.707a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        <span>Open Box • Pristine Condition</span>
+                      </span>
+                    </div>
+                  );
+                }
+
+                if (isRefurbished) {
+                  return (
+                    <div className="mb-2 sm:mb-3.5 flex flex-wrap items-center">
+                      {/* Premium Certified Scalloped Ribbon Emblem */}
+                      <span className="inline-flex max-w-full items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-medium tracking-wide bg-[#1d4ed8]/5 text-[#1e40af] border border-[#3b82f6]/30 shadow-xs">
+                        <svg className="w-4 h-4 sm:w-5 sm:h-5 text-[#2563eb] shrink-0" viewBox="0 0 100 100" fill="currentColor">
+                          {/* 16-point scalloped certificate seal */}
+                          <path d="M50 0 C54 7 60 7 66 3 C72 8 77 10 81 17 C88 20 91 26 92 34 C98 39 99 45 97 53 C99 61 97 67 92 72 C91 80 87 85 80 88 C76 94 71 96 64 99 C58 96 52 96 47 100 C42 96 36 96 30 99 C24 95 19 93 15 87 C8 84 5 78 4 70 C-1 65 -1 59 1 51 C-1 43 1 37 6 32 C7 24 11 19 18 16 C22 10 27 8 34 5 C40 8 46 8 50 0 Z" fill="#2563eb" />
+                          <circle cx="50" cy="50" r="38" fill="none" stroke="white" strokeWidth="2.5" strokeDasharray="3 3" opacity="0.8" />
+                          <path d="M35 50 L45 60 L66 39" fill="none" stroke="white" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                        <span className="font-semibold text-neutral-900 tracking-tight whitespace-nowrap">Klarone Certified Refurbished</span>
+                        <span className="text-neutral-300 select-none hidden sm:inline">•</span>
+                        <span className="text-neutral-600 font-normal whitespace-nowrap hidden sm:inline">Grade-A Quality</span>
+                      </span>
+                    </div>
+                  );
+                }
+
+                return (
+                  <div className="mb-3.5 flex flex-wrap items-center gap-2">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11.5px] font-medium tracking-wide bg-emerald-50 text-emerald-900 border border-emerald-200/90 shadow-2xs">
+                      <svg className="w-3.5 h-3.5 text-emerald-600" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 2a8 8 0 100 16 8 8 0 000-16zm3.707 6.707a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      <span>Brand New • Factory Sealed</span>
+                    </span>
+                  </div>
+                );
+              })()}
+
               <h1
                 style={{ fontFamily: "var(--font-serif), 'Instrument Serif', Georgia, serif" }}
                 className="text-3xl sm:text-4xl lg:text-[42px] font-normal tracking-tight text-neutral-950 leading-[1.15] break-words"
@@ -712,58 +766,106 @@ export function ProductExperienceView({ product }: ProductViewProps) {
               })}
             </div>
 
-            {/* 4. In-Stock Indicator */}
-            <div className="flex items-center gap-2 text-[13px] font-medium text-emerald-700 pt-1">
-              <svg className="w-4 h-4 text-emerald-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.4" d="M5 13l4 4L19 7" />
-              </svg>
-              <span>In - stock and ready to ship</span>
-            </div>
+            {/* 4. In-Stock / Out of Stock Indicator */}
+            {(() => {
+              const hasInventoryRecords = activeVariant?.inventories && activeVariant.inventories.length > 0;
+              const inventoryTotal = hasInventoryRecords
+                ? activeVariant.inventories.reduce((acc, inv) => acc + (inv.quantityAvailable || 0), 0)
+                : null;
+              
+              // Standard commerce logic: If inventory is tracked and <= 0, or variant is not active -> Out of Stock
+              const isOutOfStock =
+                activeVariant?.status !== "ACTIVE" ||
+                (hasInventoryRecords && inventoryTotal !== null && inventoryTotal <= 0);
+
+              if (isOutOfStock) {
+                return (
+                  <div className="flex items-center gap-2 text-[13px] font-medium text-rose-700 pt-1">
+                    <span className="h-2 w-2 rounded-full bg-rose-500 shrink-0 animate-pulse" />
+                    <span>Out of stock — Available on request</span>
+                  </div>
+                );
+              }
+
+              return (
+                <div className="flex items-center gap-2 text-[13px] font-medium text-emerald-700 pt-1">
+                  <svg className="w-4 h-4 text-emerald-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.4" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>In - stock and ready to ship</span>
+                </div>
+              );
+            })()}
 
             {/* 5. Quantity Stepper + Add to Cart Button */}
-            <div className="flex items-center gap-3 pt-2">
-              {/* Stepper Pill */}
-              <div className="flex items-center h-12 rounded-full border border-neutral-300 bg-white px-3 shrink-0">
-                <button
-                  type="button"
-                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                  className="h-8 w-8 flex items-center justify-center text-neutral-600 hover:text-black text-lg transition font-medium"
-                  aria-label="Decrease quantity"
-                >
-                  −
-                </button>
-                <span className="w-8 text-center text-sm font-semibold text-neutral-900">
-                  {quantity}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setQuantity((q) => q + 1)}
-                  className="h-8 w-8 flex items-center justify-center text-neutral-600 hover:text-black text-lg transition font-medium"
-                  aria-label="Increase quantity"
-                >
-                  +
-                </button>
-              </div>
+            {(() => {
+              const hasInventoryRecords = activeVariant?.inventories && activeVariant.inventories.length > 0;
+              const inventoryTotal = hasInventoryRecords
+                ? activeVariant.inventories.reduce((acc, inv) => acc + (inv.quantityAvailable || 0), 0)
+                : null;
+              const isOutOfStock =
+                activeVariant?.status !== "ACTIVE" ||
+                (hasInventoryRecords && inventoryTotal !== null && inventoryTotal <= 0);
 
-              {/* Add to Cart Button */}
-              <button
-                type="button"
-                onClick={handleAddToCart}
-                disabled={isAdding}
-                className="flex-1 h-12 rounded-full bg-[#e9ecef] hover:bg-[#dee2e6] text-neutral-900 font-medium text-sm transition-colors active:scale-[0.99] disabled:opacity-50 flex items-center justify-center"
-              >
-                {isAdding ? "Adding..." : addedToast ? "Added to Cart ✓" : "Add To Cart"}
-              </button>
-            </div>
+              return (
+                <>
+                  <div className="flex items-center gap-3 pt-2">
+                    {/* Stepper Pill */}
+                    <div className={`flex items-center h-12 rounded-full border border-neutral-300 bg-white px-3 shrink-0 ${isOutOfStock ? "opacity-50 pointer-events-none" : ""}`}>
+                      <button
+                        type="button"
+                        onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                        disabled={isOutOfStock}
+                        className="h-8 w-8 flex items-center justify-center text-neutral-600 hover:text-black text-lg transition font-medium"
+                        aria-label="Decrease quantity"
+                      >
+                        −
+                      </button>
+                      <span className="w-8 text-center text-sm font-semibold text-neutral-900">
+                        {quantity}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setQuantity((q) => q + 1)}
+                        disabled={isOutOfStock}
+                        className="h-8 w-8 flex items-center justify-center text-neutral-600 hover:text-black text-lg transition font-medium"
+                        aria-label="Increase quantity"
+                      >
+                        +
+                      </button>
+                    </div>
 
-            {/* Buy It Now Accent Button */}
-            <button
-              type="button"
-              onClick={handleBuyNow}
-              className="w-full h-12 rounded-full bg-[#dcf19a] hover:bg-[#d4ed89] text-neutral-950 font-semibold text-sm shadow-xs transition active:scale-[0.99] flex items-center justify-center"
-            >
-              Buy It Now
-            </button>
+                    {/* Add to Cart Button */}
+                    <button
+                      type="button"
+                      onClick={handleAddToCart}
+                      disabled={isAdding || isOutOfStock}
+                      className={`flex-1 h-12 rounded-full font-medium text-sm transition-colors active:scale-[0.99] flex items-center justify-center ${
+                        isOutOfStock
+                          ? "bg-neutral-100 text-neutral-400 cursor-not-allowed border border-neutral-200"
+                          : "bg-[#e9ecef] hover:bg-[#dee2e6] text-neutral-900"
+                      }`}
+                    >
+                      {isOutOfStock ? "Out of Stock" : isAdding ? "Adding..." : addedToast ? "Added to Cart ✓" : "Add To Cart"}
+                    </button>
+                  </div>
+
+                  {/* Buy It Now Accent Button */}
+                  <button
+                    type="button"
+                    onClick={handleBuyNow}
+                    disabled={isOutOfStock}
+                    className={`w-full h-12 rounded-full font-semibold text-sm shadow-xs transition active:scale-[0.99] flex items-center justify-center ${
+                      isOutOfStock
+                        ? "bg-neutral-100 text-neutral-400 cursor-not-allowed border border-neutral-200"
+                        : "bg-[#dcf19a] hover:bg-[#d4ed89] text-neutral-950"
+                    }`}
+                  >
+                    {isOutOfStock ? "Sold Out" : "Buy It Now"}
+                  </button>
+                </>
+              );
+            })()}
 
             {/* Value Props Row (Free shipping, Easy return, Safe checkout) */}
             <div className="grid grid-cols-3 gap-2 border-t border-neutral-200/80 pt-5 text-center text-xs text-neutral-600">
@@ -775,9 +877,9 @@ export function ProductExperienceView({ product }: ProductViewProps) {
               </div>
               <div className="flex flex-col items-center gap-1.5">
                 <svg className="w-5 h-5 text-neutral-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                 </svg>
-                <span>Easy return</span>
+                <span>1-Year Warranty</span>
               </div>
               <div className="flex flex-col items-center gap-1.5">
                 <svg className="w-5 h-5 text-neutral-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -842,6 +944,16 @@ export function ProductExperienceView({ product }: ProductViewProps) {
                 </button>
                 {openSections.specs && (
                   <div className="mt-3 text-xs divide-y divide-neutral-100">
+                    <div className="flex justify-between py-2 text-neutral-600">
+                      <span>Condition</span>
+                      <span className="font-semibold text-neutral-900">
+                        {product.productType?.toUpperCase() === "LAPTOP_OPEN_BOX" || product.productType?.toUpperCase() === "OPEN_BOX"
+                          ? "Open Box / Clearance (Pristine)"
+                          : product.productType?.toUpperCase() === "LAPTOP_NEW" || product.productType?.toUpperCase() === "NEW"
+                            ? "Brand New Factory Sealed"
+                            : "Certified Refurbished (Grade-A)"}
+                      </span>
+                    </div>
                     {Object.entries(spec)
                       .filter(([_, v]) => Boolean(v))
                       .slice(0, 10)

@@ -118,10 +118,126 @@ export default function VariantMatrixTable({
 
   const visibleGroups = groups.filter((g) => g.allVariantsForValue.length > 0);
 
+  // If no options are configured, but the product already has variants (e.g. from catalog seed/import),
+  // render a clear flat list so staff can immediately manage prices, inventory, and edit them.
   if (!effectiveGroupBy) {
+    if (variants.length === 0) {
+      return (
+        <div className="rounded-xl border border-dashed border-neutral-200 bg-neutral-50 px-4 py-6 text-center text-[12.5px] text-neutral-500">
+          Add an option with at least one value to see the variant matrix.
+        </div>
+      );
+    }
+
+    const q = query.trim().toLowerCase();
+    const filteredFlatVariants = q
+      ? variants.filter((v) => {
+          const vName = (v.variantName ?? "").toLowerCase();
+          const sku = v.sku.toLowerCase();
+          return vName.includes(q) || sku.includes(q);
+        })
+      : variants;
+
     return (
-      <div className="rounded-xl border border-dashed border-neutral-200 bg-neutral-50 px-4 py-6 text-center text-[12.5px] text-neutral-500">
-        Add an option with at least one value to see the variant matrix.
+      <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-200 bg-white px-4 py-2.5">
+          <div className="flex items-center gap-2 text-[12.5px] font-medium text-neutral-700">
+            <span>Direct Variants ({variants.length})</span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 rounded-md border border-neutral-200 bg-white px-2 py-1 focus-within:border-neutral-400 focus-within:ring-2 focus-within:ring-neutral-200">
+              <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5 text-neutral-400">
+                <circle cx="7" cy="7" r="4.5" stroke="currentColor" strokeWidth="1.4" />
+                <path d="m10.5 10.5 2 2" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+              </svg>
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search variants"
+                className="w-[160px] border-0 bg-transparent text-[12.5px] outline-none placeholder:text-neutral-400"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-[minmax(0,2fr)_140px_100px_120px_40px] items-center gap-3 border-b border-neutral-100 bg-[#fafafa] px-4 py-2 text-[11px] font-medium uppercase tracking-wide text-neutral-500">
+          <span>Variant / SKU</span>
+          <span>Price</span>
+          <span>Available</span>
+          <span>Status</span>
+          <span />
+        </div>
+
+        <div className="divide-y divide-neutral-100">
+          {filteredFlatVariants.length === 0 ? (
+            <div className="px-4 py-6 text-center text-[12.5px] text-neutral-500">
+              No variants match the current search.
+            </div>
+          ) : (
+            filteredFlatVariants.map((variant) => (
+              <div
+                key={variant.id}
+                onClick={() => onOpenVariant?.(variant.id)}
+                className="grid cursor-pointer grid-cols-[minmax(0,2fr)_140px_100px_120px_40px] items-center gap-3 bg-white px-4 py-3 text-[13px] hover:bg-neutral-50 transition"
+              >
+                <div className="flex flex-col min-w-0 pr-2">
+                  <span className="font-medium text-neutral-900 truncate">
+                    {variant.variantName || variant.sku}
+                  </span>
+                  <span className="text-[11.5px] text-neutral-500 font-mono">
+                    {variant.sku}
+                  </span>
+                </div>
+                <span className="text-neutral-800 font-medium">
+                  {money(variant.sellingPrice)}
+                </span>
+                <span className="text-neutral-800">
+                  {variant.quantityAvailable}
+                </span>
+                <span>
+                  <span
+                    className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium ${
+                      variant.status === "ACTIVE"
+                        ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                        : "bg-neutral-100 text-neutral-600 border border-neutral-200"
+                    }`}
+                  >
+                    {variant.status === "ACTIVE" ? "Active" : "Inactive"}
+                  </span>
+                </span>
+                <span className="flex justify-center">
+                  {onDeleteVariant ? (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDeleteVariant(variant);
+                      }}
+                      aria-label={`Delete variant ${variant.sku}`}
+                      className="flex h-6 w-6 items-center justify-center rounded-md border border-transparent text-neutral-400 hover:border-red-200 hover:bg-red-50 hover:text-red-600"
+                    >
+                      <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5">
+                        <path
+                          d="M3.5 4.5h9M6 4.5V3h4v1.5M5 6.5v6M8 6.5v6M11 6.5v6M4.5 4.5l.5 9.5h6l.5-9.5"
+                          stroke="currentColor"
+                          strokeWidth="1.4"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </button>
+                  ) : null}
+                </span>
+              </div>
+            ))
+          )}
+        </div>
+
+        <div className="border-t border-neutral-100 bg-white px-4 py-2 text-[11.5px] text-neutral-500">
+          Total inventory at AJC BOSE ROAD KOLKATA:{" "}
+          {variants.reduce((sum, v) => sum + v.quantityAvailable, 0)} available
+        </div>
       </div>
     );
   }

@@ -828,6 +828,31 @@ export default function StaffCatalogueProductEditor() {
                 </h2>
               </div>
               <div className="space-y-4 px-4 py-4">
+                {/* Product Condition */}
+                <div>
+                  <label className="mb-1.5 block text-[12px] font-medium text-neutral-700">
+                    Product Condition
+                  </label>
+                  <select
+                    value={
+                      productType.startsWith("LAPTOP_")
+                        ? productType
+                        : shortDescription?.toLowerCase().includes("refurbished")
+                          ? "LAPTOP_REFURBISHED"
+                          : "LAPTOP_NEW"
+                    }
+                    onChange={(e) => setProductType(e.target.value)}
+                    className="flex h-9 w-full items-center rounded-lg border border-neutral-200 bg-white px-3 text-[13px] text-neutral-800 transition hover:border-neutral-300 focus:border-neutral-400 focus:ring-2 focus:ring-neutral-200"
+                  >
+                    <option value="LAPTOP_REFURBISHED">Refurbished (Klarone Certified Grade-A)</option>
+                    <option value="LAPTOP_NEW">Brand New (Factory Sealed)</option>
+                    <option value="LAPTOP_OPEN_BOX">Open Box (Unused / Clearance)</option>
+                  </select>
+                  <p className="mt-1 text-[11px] text-neutral-400">
+                    Controls customer trust badge, guarantee label and warranty assurances.
+                  </p>
+                </div>
+
                 {/* Category Dropdown */}
                 <div>
                   <label className="mb-1.5 block text-[12px] font-medium text-neutral-700">
