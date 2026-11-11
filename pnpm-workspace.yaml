@@ -11,3 +11,4 @@ allowBuilds:
   "argon2": true
   "protobufjs": true
   "@google/genai": true
+  '@swc/core': true
