@@ -194,23 +194,36 @@ export function FacetSidebar({ facets, highestPrice, onApply, isMobileDrawer }: 
 
           {openSections.collection && (
             <div className="mt-4 space-y-3.5">
-              {facets.collections.map((col) => (
-                <label
-                  key={col.slug}
-                  className="group flex items-center justify-between text-[15px] text-stone-700 cursor-pointer hover:text-slate-950 transition-colors"
-                >
-                  <span className="flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      checked={currentCollectionSlug === col.slug}
-                      onChange={() => toggleCollection(col.slug)}
-                      className="h-5 w-5 rounded-[4px] border-stone-400 text-slate-950 focus:ring-0 accent-slate-950 cursor-pointer"
-                    />
-                    <span className="font-normal text-slate-800">{col.title}</span>
-                  </span>
-                  <span className="text-[14px] text-stone-400 font-light">{col.count}</span>
-                </label>
-              ))}
+              {facets.collections.map((col) => {
+                const isChecked = currentCollectionSlug === col.slug;
+                const isDisabled = col.count === 0 && !isChecked;
+                return (
+                  <label
+                    key={col.slug}
+                    className={`group flex items-center justify-between text-[15px] transition-colors ${
+                      isDisabled
+                        ? "text-stone-400 cursor-not-allowed opacity-60"
+                        : "text-stone-700 cursor-pointer hover:text-slate-950"
+                    }`}
+                  >
+                    <span className="flex items-center gap-3">
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        disabled={isDisabled}
+                        onChange={() => toggleCollection(col.slug)}
+                        className={`h-5 w-5 rounded-[4px] border-stone-400 text-slate-950 focus:ring-0 accent-slate-950 ${
+                          isDisabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"
+                        }`}
+                      />
+                      <span className={`font-normal ${isChecked ? "font-semibold text-slate-950" : ""}`}>
+                        {col.title}
+                      </span>
+                    </span>
+                    <span className="text-[14px] text-stone-400 font-light">{col.count}</span>
+                  </label>
+                );
+              })}
             </div>
           )}
         </div>
@@ -301,23 +314,36 @@ export function FacetSidebar({ facets, highestPrice, onApply, isMobileDrawer }: 
 
           {openSections.ram && (
             <div className="mt-4 space-y-3.5">
-              {facets.ramOptions.map((opt) => (
-                <label
-                  key={opt.ramGb}
-                  className="group flex items-center justify-between text-[15px] text-stone-700 cursor-pointer hover:text-slate-950 transition-colors"
-                >
-                  <span className="flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      checked={currentRamGbs.includes(opt.ramGb)}
-                      onChange={() => toggleRam(opt.ramGb)}
-                      className="h-5 w-5 rounded-[4px] border-stone-400 text-slate-950 focus:ring-0 accent-slate-950 cursor-pointer"
-                    />
-                    <span className="font-normal text-slate-800">{opt.ramGb}GB RAM</span>
-                  </span>
-                  <span className="text-[14px] text-stone-400 font-light">{opt.count}</span>
-                </label>
-              ))}
+              {facets.ramOptions.map((opt) => {
+                const isChecked = currentRamGbs.includes(opt.ramGb);
+                const isDisabled = opt.count === 0 && !isChecked;
+                return (
+                  <label
+                    key={opt.ramGb}
+                    className={`group flex items-center justify-between text-[15px] transition-colors ${
+                      isDisabled
+                        ? "text-stone-400 cursor-not-allowed opacity-60"
+                        : "text-stone-700 cursor-pointer hover:text-slate-950"
+                    }`}
+                  >
+                    <span className="flex items-center gap-3">
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        disabled={isDisabled}
+                        onChange={() => toggleRam(opt.ramGb)}
+                        className={`h-5 w-5 rounded-[4px] border-stone-400 text-slate-950 focus:ring-0 accent-slate-950 ${
+                          isDisabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"
+                        }`}
+                      />
+                      <span className={`font-normal ${isChecked ? "font-semibold text-slate-950" : ""}`}>
+                        {opt.ramGb}GB RAM
+                      </span>
+                    </span>
+                    <span className="text-[14px] text-stone-400 font-light">{opt.count}</span>
+                  </label>
+                );
+              })}
             </div>
           )}
         </div>
@@ -344,27 +370,40 @@ export function FacetSidebar({ facets, highestPrice, onApply, isMobileDrawer }: 
 
           {openSections.storage && (
             <div className="mt-4 space-y-3.5">
-              {facets.storageOptions.map((opt) => (
-                <label
-                  key={opt.storageGb}
-                  className="group flex items-center justify-between text-[15px] text-stone-700 cursor-pointer hover:text-slate-950 transition-colors"
-                >
-                  <span className="flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      checked={currentStorageGbs.includes(opt.storageGb)}
-                      onChange={() => toggleStorage(opt.storageGb)}
-                      className="h-5 w-5 rounded-[4px] border-stone-400 text-slate-950 focus:ring-0 accent-slate-950 cursor-pointer"
-                    />
-                    <span className="font-normal text-slate-800">
-                      {opt.storageGb >= 1024
-                        ? `${opt.storageGb / 1024}TB SSD`
-                        : `${opt.storageGb}GB SSD`}
+              {facets.storageOptions.map((opt) => {
+                const isChecked = currentStorageGbs.includes(opt.storageGb);
+                const isDisabled = opt.count === 0 && !isChecked;
+                const formattedLabel =
+                  opt.storageGb >= 1024
+                    ? `${opt.storageGb / 1024}TB SSD`
+                    : `${opt.storageGb}GB SSD`;
+                return (
+                  <label
+                    key={opt.storageGb}
+                    className={`group flex items-center justify-between text-[15px] transition-colors ${
+                      isDisabled
+                        ? "text-stone-400 cursor-not-allowed opacity-60"
+                        : "text-stone-700 cursor-pointer hover:text-slate-950"
+                    }`}
+                  >
+                    <span className="flex items-center gap-3">
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        disabled={isDisabled}
+                        onChange={() => toggleStorage(opt.storageGb)}
+                        className={`h-5 w-5 rounded-[4px] border-stone-400 text-slate-950 focus:ring-0 accent-slate-950 ${
+                          isDisabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"
+                        }`}
+                      />
+                      <span className={`font-normal ${isChecked ? "font-semibold text-slate-950" : ""}`}>
+                        {formattedLabel}
+                      </span>
                     </span>
-                  </span>
-                  <span className="text-[14px] text-stone-400 font-light">{opt.count}</span>
-                </label>
-              ))}
+                    <span className="text-[14px] text-stone-400 font-light">{opt.count}</span>
+                  </label>
+                );
+              })}
             </div>
           )}
         </div>
@@ -391,23 +430,36 @@ export function FacetSidebar({ facets, highestPrice, onApply, isMobileDrawer }: 
 
           {openSections.brand && (
             <div className="mt-4 space-y-3.5">
-              {facets.brands.map((b) => (
-                <label
-                  key={b.slug}
-                  className="group flex items-center justify-between text-[15px] text-stone-700 cursor-pointer hover:text-slate-950 transition-colors"
-                >
-                  <span className="flex items-center gap-3">
-                    <input
-                      type="checkbox"
-                      checked={currentBrandSlugs.includes(b.slug)}
-                      onChange={() => toggleBrand(b.slug)}
-                      className="h-5 w-5 rounded-[4px] border-stone-400 text-slate-950 focus:ring-0 accent-slate-950 cursor-pointer"
-                    />
-                    <span className="font-normal text-slate-800">{b.name}</span>
-                  </span>
-                  <span className="text-[14px] text-stone-400 font-light">{b.count}</span>
-                </label>
-              ))}
+              {facets.brands.map((b) => {
+                const isChecked = currentBrandSlugs.includes(b.slug);
+                const isDisabled = b.count === 0 && !isChecked;
+                return (
+                  <label
+                    key={b.slug}
+                    className={`group flex items-center justify-between text-[15px] transition-colors ${
+                      isDisabled
+                        ? "text-stone-400 cursor-not-allowed opacity-60"
+                        : "text-stone-700 cursor-pointer hover:text-slate-950"
+                    }`}
+                  >
+                    <span className="flex items-center gap-3">
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        disabled={isDisabled}
+                        onChange={() => toggleBrand(b.slug)}
+                        className={`h-5 w-5 rounded-[4px] border-stone-400 text-slate-950 focus:ring-0 accent-slate-950 ${
+                          isDisabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"
+                        }`}
+                      />
+                      <span className={`font-normal ${isChecked ? "font-semibold text-slate-950" : ""}`}>
+                        {b.name}
+                      </span>
+                    </span>
+                    <span className="text-[14px] text-stone-400 font-light">{b.count}</span>
+                  </label>
+                );
+              })}
             </div>
           )}
         </div>

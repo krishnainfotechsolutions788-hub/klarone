@@ -562,7 +562,22 @@ export class CatalogueService {
     categorySlug?: string;
     collectionSlug?: string;
   }) {
-    // Fetch all published products within scope to aggregate faceted counts
+    // 1. Fetch ALL master active taxonomy options (Brands, Collections, RAM, Storage)
+    // so options never disappear from the filter sidebar even when count is 0.
+    const [allBrands, allCollections] = await Promise.all([
+      this.prisma.brand.findMany({
+        where: { status: "ACTIVE" },
+        select: { id: true, name: true, slug: true },
+        orderBy: { name: "asc" },
+      }),
+      this.prisma.collection.findMany({
+        where: { status: "ACTIVE" },
+        select: { id: true, title: true, slug: true },
+        orderBy: { title: "asc" },
+      }),
+    ]);
+
+    // 2. Query products in category scope to calculate dynamic match counts
     const baseWhere: Record<string, unknown> = {
       status: "PUBLISHED",
       ...(params.categorySlug
@@ -587,59 +602,113 @@ export class CatalogueService {
         : {}),
     };
 
-    const products = await this.prisma.product.findMany({
-      where: baseWhere,
-      select: {
-        brand: {
-          select: { id: true, name: true, slug: true },
-        },
-        category: {
-          select: { id: true, name: true, slug: true },
-        },
-        collections: {
-          where: {
-            collection: { status: "ACTIVE" },
+    // Also get overall category/catalog max price so the slider upper ceiling doesn't shrink
+    const catalogWhere: Record<string, unknown> = {
+      status: "PUBLISHED",
+      ...(params.categorySlug
+        ? {
+          category: {
+            slug: params.categorySlug,
+            status: "ACTIVE",
           },
-          select: {
-            collection: {
-              select: { id: true, title: true, slug: true },
+        }
+        : {}),
+    };
+
+    const [products, catalogProducts] = await Promise.all([
+      this.prisma.product.findMany({
+        where: baseWhere,
+        select: {
+          brand: {
+            select: { id: true, name: true, slug: true },
+          },
+          category: {
+            select: { id: true, name: true, slug: true },
+          },
+          collections: {
+            where: {
+              collection: { status: "ACTIVE" },
+            },
+            select: {
+              collection: {
+                select: { id: true, title: true, slug: true },
+              },
             },
           },
-        },
-        variants: {
-          where: { status: "ACTIVE" },
-          select: {
-            sellingPrice: true,
-            ramGb: true,
-            storageGb: true,
-            collectionVariants: {
-              where: {
-                collection: { status: "ACTIVE" },
+          variants: {
+            where: { status: "ACTIVE" },
+            select: {
+              sellingPrice: true,
+              ramGb: true,
+              storageGb: true,
+              collectionVariants: {
+                where: {
+                  collection: { status: "ACTIVE" },
+                },
+                select: {
+                  collection: {
+                    select: { id: true, title: true, slug: true },
+                  },
+                },
               },
-              select: {
-                collection: {
-                  select: { id: true, title: true, slug: true },
+              inventories: {
+                select: {
+                  quantityAvailable: true,
                 },
               },
             },
-            inventories: {
-              select: {
-                quantityAvailable: true,
-              },
+          },
+        },
+      }),
+      this.prisma.product.findMany({
+        where: catalogWhere,
+        select: {
+          variants: {
+            where: { status: "ACTIVE" },
+            select: {
+              sellingPrice: true,
+              ramGb: true,
+              storageGb: true,
             },
           },
         },
-      },
-    });
+      }),
+    ]);
 
+    // Initialize all master brands with count: 0
     const brandCounts = new Map<string, { id: number; name: string; slug: string; count: number }>();
+    for (const b of allBrands) {
+      brandCounts.set(b.slug, { id: b.id, name: b.name, slug: b.slug, count: 0 });
+    }
+
+    // Initialize all master collections with count: 0
     const collectionCounts = new Map<string, { id: number; title: string; slug: string; count: number }>();
+    for (const c of allCollections) {
+      collectionCounts.set(c.slug, { id: c.id, title: c.title, slug: c.slug, count: 0 });
+    }
+
+    // Initialize all known RAM and Storage options from the entire catalog
     const ramCounts = new Map<number, number>();
     const storageCounts = new Map<number, number>();
+    let catalogMaxPrice = 0;
+    let catalogMinPrice = Infinity;
+
+    for (const cp of catalogProducts) {
+      for (const cv of cp.variants) {
+        const p = Number(cv.sellingPrice.toString());
+        if (p < catalogMinPrice) catalogMinPrice = p;
+        if (p > catalogMaxPrice) catalogMaxPrice = p;
+        if (cv.ramGb && !ramCounts.has(cv.ramGb)) {
+          ramCounts.set(cv.ramGb, 0);
+        }
+        if (cv.storageGb && !storageCounts.has(cv.storageGb)) {
+          storageCounts.set(cv.storageGb, 0);
+        }
+      }
+    }
+
     let inStockCount = 0;
     let outOfStockCount = 0;
-    let minPrice = Infinity;
-    let maxPrice = 0;
 
     for (const p of products) {
       // Brands
@@ -678,7 +747,6 @@ export class CatalogueService {
 
       // Variants
       for (const v of p.variants) {
-        // Also capture collection links at variant level if any
         for (const cv of v.collectionVariants || []) {
           if (cv.collection && !seenProductColSlugs.has(cv.collection.slug)) {
             seenProductColSlugs.add(cv.collection.slug);
@@ -692,10 +760,6 @@ export class CatalogueService {
           }
         }
 
-        const price = Number(v.sellingPrice.toString());
-        if (price < minPrice) minPrice = price;
-        if (price > maxPrice) maxPrice = price;
-
         if (v.ramGb) {
           ramCounts.set(v.ramGb, (ramCounts.get(v.ramGb) ?? 0) + 1);
         }
@@ -705,14 +769,21 @@ export class CatalogueService {
       }
     }
 
-    if (minPrice === Infinity) minPrice = 0;
+    if (catalogMinPrice === Infinity) catalogMinPrice = 0;
 
     return toJsonSafe({
-      brands: Array.from(brandCounts.values()).sort((a, b) => b.count - a.count),
-      collections: Array.from(collectionCounts.values()).sort((a, b) => b.count - a.count),
+      // Keep options sorted primarily by count > 0, then alphabetically or logically
+      brands: Array.from(brandCounts.values()).sort((a, b) => {
+        if (b.count !== a.count) return b.count - a.count;
+        return a.name.localeCompare(b.name);
+      }),
+      collections: Array.from(collectionCounts.values()).sort((a, b) => {
+        if (b.count !== a.count) return b.count - a.count;
+        return a.title.localeCompare(b.title);
+      }),
       priceRange: {
-        min: minPrice,
-        max: maxPrice,
+        min: catalogMinPrice,
+        max: catalogMaxPrice,
       },
       ramOptions: Array.from(ramCounts.entries())
         .map(([ramGb, count]) => ({ ramGb, count }))
