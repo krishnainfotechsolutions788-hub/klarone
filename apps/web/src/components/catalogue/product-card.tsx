@@ -45,10 +45,10 @@ export function ProductCard({
   }
 
   return (
-    <div className="group relative flex flex-col justify-between rounded-[24px] bg-[#f0f2ee] p-3 sm:p-4 transition-transform duration-200 hover:-translate-y-1 hover:shadow-[0_12px_30px_rgb(0,0,0,0.06)]">
+    <div className="group relative flex flex-col justify-between rounded-[20px] sm:rounded-[24px] bg-[#f0f2ee] p-2.5 sm:p-4 transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_12px_30px_rgb(0,0,0,0.06)]">
       <Link href={productUrl} className="block w-full focus:outline-none">
         {/* Clean Unified Product Stage */}
-        <div className="relative flex aspect-[4/4.4] min-h-[160px] sm:min-h-[220px] w-full items-center justify-center overflow-hidden rounded-[18px] bg-white/40">
+        <div className="relative flex aspect-[4/3.8] sm:aspect-[4/4.2] min-h-[140px] sm:min-h-[200px] w-full items-center justify-center overflow-hidden rounded-[14px] sm:rounded-[18px] bg-white/50">
           {primaryMedia?.url ? (
             <Image
               src={primaryMedia.url}
@@ -56,36 +56,36 @@ export function ProductCard({
               fill
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
               priority={priority}
-              className="object-contain p-3 sm:p-5 transition-transform duration-200 group-hover:scale-105"
+              className="object-contain p-2 sm:p-4 transition-transform duration-200 group-hover:scale-105"
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center text-4xl sm:text-5xl text-stone-400 select-none">
+            <div className="flex h-full w-full items-center justify-center text-3xl sm:text-5xl text-stone-400 select-none">
               💻
             </div>
           )}
         </div>
 
-        {/* Card Meta & Bottom Row matching landing page Month's Top Products */}
-        <div className="mt-3.5 sm:mt-4 flex items-end justify-between px-1 pb-1">
-          <div className="flex flex-col min-w-0 pr-2">
-            <span className="text-[11px] sm:text-xs font-normal text-stone-500 uppercase tracking-wide truncate">
+        {/* Card Meta & Bottom Row */}
+        <div className="mt-2.5 sm:mt-3.5 flex items-end justify-between px-0.5 sm:px-1 pb-0.5 sm:pb-1 gap-1.5 sm:gap-2">
+          <div className="flex flex-col min-w-0 flex-1">
+            <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-stone-500 truncate">
               {product.brand?.name ?? product.category?.name ?? "Laptops"}
             </span>
-            <h3 className="mt-0.5 sm:mt-1 text-[14px] sm:text-[16px] font-semibold tracking-tight text-slate-900 group-hover:text-emerald-950 transition-colors line-clamp-1">
+            <h3 className="mt-0.5 text-[13px] sm:text-[15px] font-semibold tracking-tight text-slate-900 group-hover:text-emerald-950 transition-colors line-clamp-2 leading-snug">
               {product.name}
             </h3>
 
             {/* Price Row */}
-            <div className="mt-1.5 flex items-baseline gap-2">
-              <span className="text-sm sm:text-base font-semibold text-slate-900">
+            <div className="mt-1 sm:mt-1.5 flex flex-wrap items-baseline gap-1 sm:gap-1.5">
+              <span className="text-[13px] sm:text-base font-bold text-slate-900 whitespace-nowrap">
                 {new Intl.NumberFormat("en-IN", {
                   style: "currency",
                   currency: variant?.currency || "INR",
                   maximumFractionDigits: 0,
                 }).format(price)}
               </span>
-              {originalPrice && (
-                <span className="text-xs text-stone-400 line-through">
+              {originalPrice && originalPrice > price && (
+                <span className="text-[10px] sm:text-xs text-stone-400 line-through whitespace-nowrap">
                   {new Intl.NumberFormat("en-IN", {
                     style: "currency",
                     currency: variant?.currency || "INR",
@@ -96,20 +96,20 @@ export function ProductCard({
             </div>
           </div>
 
-          {/* Circular Add to Cart Button (44px) matching Landing Page with Shopping Bag Icon */}
+          {/* Circular Add to Cart Button (Ergonomically sized for mobile touch) */}
           <motion.button
-            whileTap={{ scale: 0.9 }}
+            whileTap={{ scale: 0.88 }}
             type="button"
             onClick={handleAddToCart}
             disabled={adding}
             aria-label={`Add ${product.name} to cart`}
-            className="flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-full bg-slate-950 text-white shadow-sm transition-all duration-200 hover:scale-105 hover:bg-slate-800 disabled:opacity-50 cursor-pointer"
+            className="flex h-8 w-8 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-full bg-slate-950 text-white shadow-xs transition-all duration-200 hover:scale-105 hover:bg-slate-800 disabled:opacity-50 cursor-pointer mb-0.5"
           >
             {adding ? (
-              <span className="text-xs font-bold text-lime-300">✓</span>
+              <span className="text-[11px] sm:text-xs font-bold text-lime-300">✓</span>
             ) : (
               <svg
-                className="h-4 w-4"
+                className="h-3.5 w-3.5 sm:h-4 sm:w-4"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
