@@ -515,8 +515,9 @@ export default function StaffCatalogueProductEditor() {
           <div className="flex min-w-0 items-center gap-2">
             <Link
               href="/staff/catalogue/products"
+              prefetch={true}
               aria-label="Back to products"
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-neutral-200 text-neutral-600 hover:bg-neutral-50"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-neutral-200 text-neutral-600 hover:bg-neutral-50 active:scale-95 transition-all"
             >
               <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5">
                 <path
@@ -542,7 +543,7 @@ export default function StaffCatalogueProductEditor() {
               type="button"
               onClick={() => setShowDeleteConfirm(true)}
               disabled={deleting}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-red-200 bg-white px-3 py-1.5 text-[13px] font-medium text-red-600 hover:bg-red-50 hover:border-red-300 disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-red-200 bg-white px-3 py-1.5 text-[13px] font-medium text-red-600 hover:bg-red-50 hover:border-red-300 active:scale-95 transition-all disabled:opacity-50"
             >
               <svg
                 width="14"
@@ -564,7 +565,7 @@ export default function StaffCatalogueProductEditor() {
               type="button"
               onClick={() => void saveAll()}
               disabled={saving || variants.length === 0}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-neutral-900 px-3.5 py-1.5 text-[13px] font-medium text-white hover:bg-neutral-800 disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-neutral-900 px-3.5 py-1.5 text-[13px] font-medium text-white hover:bg-neutral-800 active:scale-95 transition-all disabled:opacity-50"
             >
               {saving ? "Saving…" : "Save"}
             </button>

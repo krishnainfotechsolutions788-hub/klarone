@@ -133,6 +133,7 @@ export function StorefrontHero() {
             <div className="mt-8 flex items-center justify-center sm:mt-9">
               <Link
                 href={slide.ctaLink}
+                prefetch={true}
                 className="group flex items-center gap-3.5 rounded-full bg-[#d6f088] py-2.5 pl-6 pr-2.5 text-sm font-semibold tracking-tight text-slate-900 shadow-md transition-all duration-200 hover:scale-105 hover:bg-[#c8e678] active:scale-95"
               >
                 <span>{slide.ctaText}</span>

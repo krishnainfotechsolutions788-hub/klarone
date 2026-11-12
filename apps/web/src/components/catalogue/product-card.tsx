@@ -45,8 +45,8 @@ export function ProductCard({
   }
 
   return (
-    <div className="group relative flex flex-col justify-between rounded-[20px] sm:rounded-[24px] bg-[#f0f2ee] p-2.5 sm:p-4 transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_12px_30px_rgb(0,0,0,0.06)]">
-      <Link href={productUrl} className="block w-full focus:outline-none">
+    <div className="group relative flex flex-col justify-between rounded-[20px] sm:rounded-[24px] bg-[#f0f2ee] p-2.5 sm:p-4 transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_12px_30px_rgb(0,0,0,0.06)] active:scale-[0.99]">
+      <Link href={productUrl} prefetch={true} className="block w-full focus:outline-none">
         {/* Clean Unified Product Stage */}
         <div className="relative flex aspect-[4/3.8] sm:aspect-[4/4.2] min-h-[140px] sm:min-h-[200px] w-full items-center justify-center overflow-hidden rounded-[14px] sm:rounded-[18px] bg-white/50">
           {primaryMedia?.url ? (

@@ -166,7 +166,8 @@ export default function CreateStaffCollectionPage() {
           <div className="flex items-center gap-3">
             <Link
               href="/staff/catalogue/collections"
-              className="flex h-8 w-8 items-center justify-center rounded-lg border border-neutral-200 hover:bg-neutral-50 text-neutral-600 transition"
+              prefetch={true}
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-neutral-200 hover:bg-neutral-50 text-neutral-600 transition active:scale-95"
               title="Back to collections"
             >
               <svg viewBox="0 0 16 16" fill="none" className="h-4 w-4">
@@ -182,7 +183,8 @@ export default function CreateStaffCollectionPage() {
             <div className="flex items-center gap-2 text-[13px] text-neutral-600">
               <Link
                 href="/staff/catalogue/collections"
-                className="hover:underline text-neutral-500"
+                prefetch={true}
+                className="hover:underline text-neutral-500 transition-colors"
               >
                 Collections
               </Link>
@@ -197,7 +199,7 @@ export default function CreateStaffCollectionPage() {
             <button
               type="button"
               onClick={() => router.push("/staff/catalogue/collections")}
-              className="rounded-lg border border-neutral-200 bg-white px-3 py-1.5 text-[12.5px] font-medium text-neutral-700 hover:bg-neutral-50 transition"
+              className="rounded-lg border border-neutral-200 bg-white px-3 py-1.5 text-[12.5px] font-medium text-neutral-700 hover:bg-neutral-50 active:scale-95 transition"
             >
               Discard
             </button>
@@ -205,7 +207,7 @@ export default function CreateStaffCollectionPage() {
               type="button"
               onClick={handleSave}
               disabled={saving}
-              className="rounded-lg bg-neutral-900 px-4 py-1.5 text-[12.5px] font-medium text-white shadow-sm hover:bg-neutral-800 disabled:opacity-50 transition"
+              className="rounded-lg bg-neutral-900 px-4 py-1.5 text-[12.5px] font-medium text-white shadow-sm hover:bg-neutral-800 active:scale-95 disabled:opacity-50 transition"
             >
               {saving ? "Saving..." : "Save"}
             </button>
