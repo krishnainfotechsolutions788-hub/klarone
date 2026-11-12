@@ -146,7 +146,8 @@ export function StorefrontGutHealthSection() {
               <Link
                 key={item.id}
                 href={item.link}
-                className="group flex flex-col items-center text-center cursor-pointer transition-transform duration-200"
+                prefetch={true}
+                className="group flex flex-col items-center text-center cursor-pointer transition-transform duration-200 active:scale-95"
               >
                 {/* Soft Mint Circular Icon Container */}
                 <div className="flex h-20 w-20 sm:h-28 sm:w-28 items-center justify-center rounded-full bg-[#dbe8de] text-stone-800 transition-all duration-300 ease-out group-hover:scale-105 group-hover:bg-[#d0e2d4] group-hover:shadow-sm">

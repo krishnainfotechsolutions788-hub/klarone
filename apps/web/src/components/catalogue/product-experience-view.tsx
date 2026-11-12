@@ -537,11 +537,11 @@ export function ProductExperienceView({ product }: ProductViewProps) {
             
             {/* 1. Breadcrumbs (Directly above product name on the right side - single line strictly) */}
             <nav className="flex items-center gap-1.5 text-xs sm:text-[13px] text-neutral-500 font-sans whitespace-nowrap overflow-hidden max-w-full">
-              <Link href="/" className="hover:text-black transition shrink-0">
+              <Link href="/" prefetch={true} className="hover:text-black transition shrink-0 active:scale-95">
                 Home
               </Link>
               <span className="text-neutral-300 shrink-0 select-none">/</span>
-              <Link href="/laptops" className="hover:text-black transition shrink-0 max-w-[130px] sm:max-w-[180px] truncate" title={product.category?.name || "Laptops"}>
+              <Link href="/laptops" prefetch={true} className="hover:text-black transition shrink-0 max-w-[130px] sm:max-w-[180px] truncate active:scale-95" title={product.category?.name || "Laptops"}>
                 {product.category?.name || "Laptops"}
               </Link>
               <span className="text-neutral-300 shrink-0 select-none">/</span>
@@ -730,7 +730,7 @@ export function ProductExperienceView({ product }: ProductViewProps) {
                             type="button"
                             onClick={() => handleSelectOption(opt.name, item.value)}
                             title={`${item.value}${!isAvailable ? " (Unavailable)" : ""}`}
-                            className={`relative h-9 px-4 rounded-full text-xs font-medium transition-all duration-150 border overflow-hidden flex items-center justify-center ${
+                            className={`relative h-9 px-4 rounded-full text-xs font-medium transition-all duration-150 border overflow-hidden flex items-center justify-center active:scale-95 ${
                               isSelected
                                 ? "bg-black text-white border-black shadow-xs"
                                 : isAvailable
@@ -842,7 +842,7 @@ export function ProductExperienceView({ product }: ProductViewProps) {
                       type="button"
                       onClick={handleAddToCart}
                       disabled={isAdding || isOutOfStock}
-                      className={`flex-1 h-12 rounded-full font-medium text-sm transition-colors active:scale-[0.99] flex items-center justify-center ${
+                      className={`flex-1 h-12 rounded-full font-medium text-sm transition-all duration-150 active:scale-95 flex items-center justify-center cursor-pointer ${
                         isOutOfStock
                           ? "bg-neutral-100 text-neutral-400 cursor-not-allowed border border-neutral-200"
                           : "bg-[#e9ecef] hover:bg-[#dee2e6] text-neutral-900"
@@ -857,7 +857,7 @@ export function ProductExperienceView({ product }: ProductViewProps) {
                     type="button"
                     onClick={handleBuyNow}
                     disabled={isOutOfStock}
-                    className={`w-full h-12 rounded-full font-semibold text-sm shadow-xs transition active:scale-[0.99] flex items-center justify-center ${
+                    className={`w-full h-12 rounded-full font-semibold text-sm shadow-xs transition-all duration-150 active:scale-95 flex items-center justify-center cursor-pointer ${
                       isOutOfStock
                         ? "bg-neutral-100 text-neutral-400 cursor-not-allowed border border-neutral-200"
                         : "bg-[#dcf19a] hover:bg-[#d4ed89] text-neutral-950"

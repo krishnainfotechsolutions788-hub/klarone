@@ -74,7 +74,8 @@ export function CartPageContent() {
 
         <Link
           href="/laptops"
-          className="mt-8 inline-flex h-12 items-center justify-center rounded-full bg-slate-950 px-8 text-sm font-semibold text-white transition hover:bg-stone-800"
+          prefetch={true}
+          className="mt-8 inline-flex h-12 items-center justify-center rounded-full bg-slate-950 px-8 text-sm font-semibold text-white transition hover:bg-stone-800 active:scale-95"
         >
           Browse Laptops
         </Link>
@@ -215,7 +216,8 @@ export function CartPageContent() {
           <div className="pt-3 flex flex-row items-center justify-between gap-3">
             <Link
               href="/laptops"
-              className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-stone-600 hover:text-slate-950 transition-colors"
+              prefetch={true}
+              className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-stone-600 hover:text-slate-950 transition-colors active:scale-95"
             >
               <span>←</span>
               <span>Continue shopping</span>
@@ -281,7 +283,8 @@ export function CartPageContent() {
           {/* Lime / Pale Green Checkout Button */}
           <Link
             href="/checkout"
-            className="hidden sm:flex h-12 sm:h-14 w-full items-center justify-center rounded-full bg-[#d6f088] text-sm sm:text-[15px] font-semibold text-slate-950 shadow-sm transition hover:bg-[#c9e874] active:scale-[0.99]"
+            prefetch={true}
+            className="hidden sm:flex h-12 sm:h-14 w-full items-center justify-center rounded-full bg-[#d6f088] text-sm sm:text-[15px] font-semibold text-slate-950 shadow-sm transition hover:bg-[#c9e874] active:scale-95"
           >
             Proceed to Secure Checkout
           </Link>

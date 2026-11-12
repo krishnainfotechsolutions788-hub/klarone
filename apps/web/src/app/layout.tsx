@@ -1,5 +1,6 @@
 import Script from "next/script";
 import type { Metadata, Viewport } from "next";
+import { RouteProgressBar } from "@/components/common/route-progress-bar";
 import "./globals.css";
 import { CartProvider } from "../components/cart/cart-provider";
 import { CustomerAuthProvider } from "@/components/auth/customer-auth-provider";
@@ -117,6 +118,8 @@ export default function RootLayout({
                 />
             </head>
             <body className="antialiased">
+                {/* Instant Feedback Top Progress Bar (Brand Accent: #d6f088 / #10b981) */}
+                <RouteProgressBar />
                 <CustomerAuthProvider>
                     <CartProvider>{children}</CartProvider>
                 </CustomerAuthProvider>

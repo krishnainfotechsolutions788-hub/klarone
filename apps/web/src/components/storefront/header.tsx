@@ -174,7 +174,8 @@ export function StorefrontHeader() {
             <div className="flex items-center justify-center">
               <Link
                 href="/"
-                className="font-serif text-2xl font-normal tracking-tight text-white transition hover:opacity-95 sm:text-3xl"
+                prefetch={true}
+                className="font-serif text-2xl font-normal tracking-tight text-white transition hover:opacity-95 active:scale-95 sm:text-3xl"
               >
                 klarone
               </Link>
@@ -186,8 +187,9 @@ export function StorefrontHeader() {
               {/* Account Icon on mobile and tablet */}
               <Link
                 href={isAuthenticated ? "/account" : "/login"}
+                prefetch={true}
                 aria-label="Account"
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-emerald-100/90 transition hover:text-white active:scale-95"
+                className="flex h-9 w-9 items-center justify-center rounded-lg text-emerald-100/90 transition hover:text-white active:scale-90"
               >
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
                   <path
@@ -201,8 +203,9 @@ export function StorefrontHeader() {
               {/* Shopping Cart Icon */}
               <Link
                 href="/cart"
+                prefetch={true}
                 aria-label="Shopping Cart"
-                className="relative flex h-9 w-9 items-center justify-center rounded-lg text-emerald-100/90 transition hover:text-white active:scale-95"
+                className="relative flex h-9 w-9 items-center justify-center rounded-lg text-emerald-100/90 transition hover:text-white active:scale-90"
               >
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
                   <path
@@ -267,7 +270,8 @@ export function StorefrontHeader() {
                       <Link
                         key={item.key}
                         href={item.href}
-                        className="flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold tracking-normal text-emerald-50/90 transition-all duration-200 hover:bg-[#d6f088] hover:text-slate-950 hover:shadow-sm"
+                        prefetch={true}
+                        className="flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold tracking-normal text-emerald-50/90 transition-all duration-200 hover:bg-[#d6f088] hover:text-slate-950 hover:shadow-sm active:scale-95"
                       >
                         <span className="flex h-2 w-2 rounded-full bg-[#d6f088] animate-pulse" />
                         <span>{item.label}</span>
@@ -284,7 +288,7 @@ export function StorefrontHeader() {
                       {/* Active Pill Highlight when hovering */}
                       <button
                         type="button"
-                        className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold tracking-normal transition-all duration-200 ${
+                        className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold tracking-normal transition-all duration-200 cursor-pointer active:scale-95 ${
                           isActive
                             ? "bg-[#d6f088] text-slate-950 shadow-sm"
                             : "text-emerald-50/90 hover:text-white"
@@ -313,7 +317,8 @@ export function StorefrontHeader() {
             <div className="flex items-center justify-center">
               <Link
                 href="/"
-                className="font-serif text-4xl font-normal tracking-tight text-white transition hover:opacity-95"
+                prefetch={true}
+                className="font-serif text-4xl font-normal tracking-tight text-white transition hover:opacity-95 active:scale-98"
               >
                 klarone
               </Link>
@@ -325,8 +330,9 @@ export function StorefrontHeader() {
               {/* Customer Account Icon */}
               <Link
                 href={isAuthenticated ? "/account" : "/login"}
+                prefetch={true}
                 aria-label="Account"
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-emerald-100/90 transition duration-150 hover:scale-110 hover:text-white active:scale-95"
+                className="flex h-9 w-9 items-center justify-center rounded-lg text-emerald-100/90 transition duration-150 hover:scale-110 hover:text-white active:scale-90"
               >
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
                   <path
@@ -340,8 +346,9 @@ export function StorefrontHeader() {
               {/* Shopping Cart Icon */}
               <Link
                 href="/cart"
+                prefetch={true}
                 aria-label="Shopping Cart"
-                className="relative flex h-9 w-9 items-center justify-center rounded-lg text-emerald-100/90 transition duration-150 hover:scale-110 hover:text-white active:scale-95"
+                className="relative flex h-9 w-9 items-center justify-center rounded-lg text-emerald-100/90 transition duration-150 hover:scale-110 hover:text-white active:scale-90"
               >
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
                   <path
@@ -422,7 +429,8 @@ export function StorefrontHeader() {
                           <Link
                             key={cat.id}
                             href={`/laptops?categorySlug=${cat.slug}`}
-                            className="group flex items-center gap-3.5 transition-transform hover:translate-x-0.5"
+                            prefetch={true}
+                            className="group flex items-center gap-3.5 transition-transform hover:translate-x-1 active:scale-98"
                           >
                             <div
                               className={`relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl ${bg} shadow-2xs`}
@@ -462,7 +470,8 @@ export function StorefrontHeader() {
                           <Link
                             key={col.id}
                             href={`/laptops?collectionSlug=${col.slug}`}
-                            className="group flex items-center gap-3.5 transition-transform hover:translate-x-0.5"
+                            prefetch={true}
+                            className="group flex items-center gap-3.5 transition-transform hover:translate-x-1 active:scale-98"
                           >
                             <div
                               className={`relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl ${bg} shadow-2xs`}
@@ -502,7 +511,8 @@ export function StorefrontHeader() {
                           <Link
                             key={brand.id}
                             href={`/laptops?brandSlug=${brand.slug}`}
-                            className="group flex items-center gap-3.5 transition-transform hover:translate-x-0.5"
+                            prefetch={true}
+                            className="group flex items-center gap-3.5 transition-transform hover:translate-x-1 active:scale-98"
                           >
                             <div
                               className={`relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-2xl ${bg} p-2.5 shadow-2xs`}
@@ -541,7 +551,8 @@ export function StorefrontHeader() {
                         </p>
                         <Link
                           href="/laptops"
-                          className="mt-4 inline-flex items-center text-sm font-semibold text-emerald-800 hover:underline"
+                          prefetch={true}
+                          className="mt-4 inline-flex items-center text-sm font-semibold text-emerald-800 transition-transform hover:underline active:scale-95"
                         >
                           View all laptops →
                         </Link>
@@ -578,7 +589,8 @@ export function StorefrontHeader() {
                       <div className="relative z-10 mt-5">
                         <Link
                           href="/laptops"
-                          className="group inline-flex items-center gap-3 rounded-full bg-[#d6f088] py-2 pl-5 pr-2 text-xs font-semibold text-slate-950 shadow-md transition-all hover:scale-105 hover:bg-[#c8e678]"
+                          prefetch={true}
+                          className="group inline-flex items-center gap-3 rounded-full bg-[#d6f088] py-2 pl-5 pr-2 text-xs font-semibold text-slate-950 shadow-md transition-all hover:scale-105 hover:bg-[#c8e678] active:scale-95"
                         >
                           <span>Shop Now</span>
                           <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-950 text-white transition-transform group-hover:translate-x-0.5">
@@ -624,8 +636,9 @@ export function StorefrontHeader() {
             <div className="flex h-16 items-center justify-between border-b border-stone-200/80 px-6">
               <Link
                 href="/"
+                prefetch={true}
                 onClick={() => setMobileDrawerOpen(false)}
-                className="font-serif text-3xl font-normal tracking-tight text-slate-900"
+                className="font-serif text-3xl font-normal tracking-tight text-slate-900 active:scale-95 transition-transform"
               >
                 klarone
               </Link>
@@ -633,7 +646,7 @@ export function StorefrontHeader() {
                 type="button"
                 onClick={() => setMobileDrawerOpen(false)}
                 aria-label="Close menu"
-                className="flex h-10 w-10 items-center justify-center rounded-full text-slate-500 hover:bg-stone-100 hover:text-slate-900 active:scale-95"
+                className="flex h-10 w-10 items-center justify-center rounded-full text-slate-500 hover:bg-stone-100 hover:text-slate-900 active:scale-90 transition-transform"
               >
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -650,7 +663,7 @@ export function StorefrontHeader() {
                   <button
                     type="button"
                     onClick={() => setMobileSection("shop")}
-                    className="flex w-full items-center justify-between text-left text-[18px] font-medium tracking-tight text-slate-900 transition-colors hover:text-emerald-900 active:opacity-70"
+                    className="flex w-full items-center justify-between text-left text-[18px] font-medium tracking-tight text-slate-900 transition-colors hover:text-emerald-900 active:opacity-70 active:scale-[0.99]"
                     style={{ fontFamily: "var(--font-sans), system-ui, sans-serif" }}
                   >
                     <span>Shop</span>
@@ -662,8 +675,9 @@ export function StorefrontHeader() {
                   {/* AI Advisor - green dot after AI Advisor text for mobile */}
                   <Link
                     href="/select"
+                    prefetch={true}
                     onClick={() => setMobileDrawerOpen(false)}
-                    className="flex w-full items-center justify-between text-left text-[18px] font-medium tracking-tight text-slate-900 transition-colors hover:text-emerald-900 active:opacity-70"
+                    className="flex w-full items-center justify-between text-left text-[18px] font-medium tracking-tight text-slate-900 transition-colors hover:text-emerald-900 active:opacity-70 active:scale-[0.99]"
                     style={{ fontFamily: "var(--font-sans), system-ui, sans-serif" }}
                   >
                     <span className="flex items-center gap-2">
@@ -678,8 +692,9 @@ export function StorefrontHeader() {
                   {/* All Laptops */}
                   <Link
                     href="/laptops"
+                    prefetch={true}
                     onClick={() => setMobileDrawerOpen(false)}
-                    className="flex w-full items-center justify-between text-left text-[18px] font-medium tracking-tight text-slate-900 transition-colors hover:text-emerald-900 active:opacity-70"
+                    className="flex w-full items-center justify-between text-left text-[18px] font-medium tracking-tight text-slate-900 transition-colors hover:text-emerald-900 active:opacity-70 active:scale-[0.99]"
                     style={{ fontFamily: "var(--font-sans), system-ui, sans-serif" }}
                   >
                     <span>All Laptops</span>
@@ -691,8 +706,9 @@ export function StorefrontHeader() {
                   {/* Cart Link in list */}
                   <Link
                     href="/cart"
+                    prefetch={true}
                     onClick={() => setMobileDrawerOpen(false)}
-                    className="flex w-full items-center justify-between text-left text-[18px] font-medium tracking-tight text-slate-900 transition-colors hover:text-emerald-900 active:opacity-70"
+                    className="flex w-full items-center justify-between text-left text-[18px] font-medium tracking-tight text-slate-900 transition-colors hover:text-emerald-900 active:opacity-70 active:scale-[0.99]"
                     style={{ fontFamily: "var(--font-sans), system-ui, sans-serif" }}
                   >
                     <span>Cart ({itemCount})</span>
@@ -708,7 +724,7 @@ export function StorefrontHeader() {
                   <button
                     type="button"
                     onClick={() => setMobileSection("main")}
-                    className="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900 mb-2"
+                    className="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-slate-900 mb-2 active:scale-95 transition-transform"
                   >
                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -723,7 +739,7 @@ export function StorefrontHeader() {
                       <button
                         type="button"
                         onClick={() => setOpenShopSub(openShopSub === "category" ? null : "category")}
-                        className="flex w-full items-center justify-between py-2.5 text-left font-serif text-[18px] font-normal text-slate-900"
+                        className="flex w-full items-center justify-between py-2.5 text-left font-serif text-[18px] font-normal text-slate-900 active:opacity-70"
                       >
                         <span>Shop by Category</span>
                         <svg
@@ -742,8 +758,9 @@ export function StorefrontHeader() {
                             <Link
                               key={c.id}
                               href={`/laptops?categorySlug=${c.slug}`}
+                              prefetch={true}
                               onClick={() => setMobileDrawerOpen(false)}
-                              className="block py-1 text-sm text-slate-600 hover:text-emerald-800"
+                              className="block py-1 text-sm text-slate-600 hover:text-emerald-800 active:scale-[0.98] transition-transform"
                             >
                               {c.name}
                             </Link>
@@ -757,7 +774,7 @@ export function StorefrontHeader() {
                       <button
                         type="button"
                         onClick={() => setOpenShopSub(openShopSub === "collection" ? null : "collection")}
-                        className="flex w-full items-center justify-between py-2.5 text-left font-serif text-[18px] font-normal text-slate-900"
+                        className="flex w-full items-center justify-between py-2.5 text-left font-serif text-[18px] font-normal text-slate-900 active:opacity-70"
                       >
                         <span>Shop by Collection</span>
                         <svg
@@ -776,8 +793,9 @@ export function StorefrontHeader() {
                             <Link
                               key={col.id}
                               href={`/laptops?collectionSlug=${col.slug}`}
+                              prefetch={true}
                               onClick={() => setMobileDrawerOpen(false)}
-                              className="block py-1 text-sm text-slate-600 hover:text-emerald-800"
+                              className="block py-1 text-sm text-slate-600 hover:text-emerald-800 active:scale-[0.98] transition-transform"
                             >
                               {col.title}
                             </Link>
@@ -791,7 +809,7 @@ export function StorefrontHeader() {
                       <button
                         type="button"
                         onClick={() => setOpenShopSub(openShopSub === "brand" ? null : "brand")}
-                        className="flex w-full items-center justify-between py-2.5 text-left font-serif text-[18px] font-normal text-slate-900"
+                        className="flex w-full items-center justify-between py-2.5 text-left font-serif text-[18px] font-normal text-slate-900 active:opacity-70"
                       >
                         <span>Shop by Brand</span>
                         <svg
@@ -810,8 +828,9 @@ export function StorefrontHeader() {
                             <Link
                               key={b.id}
                               href={`/laptops?brandSlug=${b.slug}`}
+                              prefetch={true}
                               onClick={() => setMobileDrawerOpen(false)}
-                              className="block py-1 text-sm text-slate-600 hover:text-emerald-800"
+                              className="block py-1 text-sm text-slate-600 hover:text-emerald-800 active:scale-[0.98] transition-transform"
                             >
                               {b.name}
                             </Link>
@@ -824,8 +843,9 @@ export function StorefrontHeader() {
                     <div>
                       <Link
                         href="/laptops"
+                        prefetch={true}
                         onClick={() => setMobileDrawerOpen(false)}
-                        className="flex w-full items-center justify-between py-2.5 text-left font-serif text-[18px] font-normal text-slate-900"
+                        className="flex w-full items-center justify-between py-2.5 text-left font-serif text-[18px] font-normal text-slate-900 active:scale-[0.98] transition-transform"
                       >
                         <span>Shop All</span>
                         <svg className="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -848,6 +868,7 @@ export function StorefrontHeader() {
                     <div className="mt-4">
                       <Link
                         href="/laptops"
+                        prefetch={true}
                         onClick={() => setMobileDrawerOpen(false)}
                         className="group inline-flex items-center gap-2 rounded-full bg-[#d6f088] py-1.5 pl-4 pr-1.5 text-xs font-semibold text-slate-950 transition-transform active:scale-95"
                       >
@@ -868,6 +889,7 @@ export function StorefrontHeader() {
             <div className="border-t border-stone-200/80 p-6 space-y-4">
               <Link
                 href={isAuthenticated ? "/account" : "/login"}
+                prefetch={true}
                 onClick={() => setMobileDrawerOpen(false)}
                 className="flex w-full items-center justify-center rounded-full bg-[#e3f49c] py-3.5 text-sm font-semibold tracking-tight text-slate-900 shadow-sm transition-transform active:scale-95 hover:bg-[#d6f088]"
               >

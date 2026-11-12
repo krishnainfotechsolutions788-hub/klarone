@@ -216,7 +216,11 @@ function SidebarNavItem({
 
   if (!hasChildren) {
     return (
-      <Link href={item.href} className={rowClass}>
+      <Link
+        href={item.href}
+        prefetch={true}
+        className={`${rowClass} active:scale-[0.98] transition-transform`}
+      >
         <span className={iconBox}>{item.icon}</span>
         <span className="flex-1 truncate">{item.label}</span>
       </Link>
@@ -226,7 +230,11 @@ function SidebarNavItem({
   return (
     <div>
       <div className="relative">
-        <Link href={item.href} className={rowClass}>
+        <Link
+          href={item.href}
+          prefetch={true}
+          className={`${rowClass} active:scale-[0.98] transition-transform`}
+        >
           <span className={iconBox}>{item.icon}</span>
           <span className="flex-1 truncate">{item.label}</span>
           <span aria-hidden className="h-4 w-4 shrink-0" />
@@ -240,7 +248,7 @@ function SidebarNavItem({
             setExpanded((v) => !v);
           }}
           aria-label={expanded ? "Collapse section" : "Expand section"}
-          className="absolute top-1/2 right-2.5 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-md text-[#8f8f8f] hover:bg-white/[0.08] hover:text-white"
+          className="absolute top-1/2 right-2.5 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-md text-[#8f8f8f] hover:bg-white/[0.08] hover:text-white active:scale-90 transition-transform"
         >
           <ChevronDownIcon open={expanded} />
         </button>
@@ -255,10 +263,11 @@ function SidebarNavItem({
               <Link
                 key={child.href}
                 href={child.href}
+                prefetch={true}
                 className={[
                   "ml-[26px] flex h-8 items-center rounded-lg px-2.5",
                   "text-[13px] leading-none",
-                  "transition-colors",
+                  "transition-all active:scale-[0.98]",
                   childIsActive
                     ? "bg-white/[0.08] font-medium text-white"
                     : "text-[#9a9a9a] hover:bg-white/[0.04] hover:text-white",

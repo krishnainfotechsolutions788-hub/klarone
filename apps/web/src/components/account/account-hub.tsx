@@ -121,7 +121,8 @@ export function AccountHub() {
             <div className="pt-2">
               <Link
                 href="/laptops"
-                className="inline-flex h-11 items-center justify-center rounded-full bg-slate-950 px-6 text-xs font-semibold text-white transition hover:bg-stone-800"
+                prefetch={true}
+                className="inline-flex h-11 items-center justify-center rounded-full bg-slate-950 px-6 text-xs font-semibold text-white transition hover:bg-stone-800 active:scale-95"
               >
                 Explore Laptops Catalog
               </Link>

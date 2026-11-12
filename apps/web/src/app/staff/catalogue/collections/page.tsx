@@ -109,7 +109,7 @@ export default function StaffCollectionsListPage() {
               type="button"
               onClick={() => router.push("/staff/catalogue/collections/new")}
               style={{ color: "#ffffff", backgroundColor: "#1a1a1a" }}
-              className="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg px-3.5 text-[13px] font-medium !text-white shadow-sm hover:!bg-[#303030] transition-colors active:!bg-[#000]"
+              className="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg px-3.5 text-[13px] font-medium !text-white shadow-sm hover:!bg-[#303030] transition-all active:scale-95 cursor-pointer"
             >
               Add collection
             </button>
@@ -198,7 +198,7 @@ export default function StaffCollectionsListPage() {
                       onClick={() =>
                         router.push(`/staff/catalogue/collections/${item.id}`)
                       }
-                      className="grid grid-cols-[44px_minmax(280px,3fr)_minmax(120px,1fr)_minmax(120px,1fr)] items-center gap-3 px-4 py-3 hover:bg-[#fbfbfb] cursor-pointer transition-colors group"
+                      className="grid grid-cols-[44px_minmax(280px,3fr)_minmax(120px,1fr)_minmax(120px,1fr)] items-center gap-3 px-4 py-3 hover:bg-[#fbfbfb] cursor-pointer transition-all active:scale-[0.99] group"
                     >
                       <div
                         className="flex justify-center"
@@ -317,7 +317,7 @@ export default function StaffCollectionsListPage() {
                   type="button"
                   disabled={page <= 1 || loading}
                   onClick={() => changePage(page - 1)}
-                  className="inline-flex h-7 items-center justify-center rounded-lg border border-[#d4d4d4] bg-white px-2.5 font-medium text-[#303030] shadow-xs hover:bg-[#f7f7f7] disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="inline-flex h-7 items-center justify-center rounded-lg border border-[#d4d4d4] bg-white px-2.5 font-medium text-[#303030] shadow-xs hover:bg-[#f7f7f7] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Previous
                 </button>
@@ -325,7 +325,7 @@ export default function StaffCollectionsListPage() {
                   type="button"
                   disabled={page >= totalPages || loading}
                   onClick={() => changePage(page + 1)}
-                  className="inline-flex h-7 items-center justify-center rounded-lg border border-[#d4d4d4] bg-white px-2.5 font-medium text-[#303030] shadow-xs hover:bg-[#f7f7f7] disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="inline-flex h-7 items-center justify-center rounded-lg border border-[#d4d4d4] bg-white px-2.5 font-medium text-[#303030] shadow-xs hover:bg-[#f7f7f7] active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Next
                 </button>
