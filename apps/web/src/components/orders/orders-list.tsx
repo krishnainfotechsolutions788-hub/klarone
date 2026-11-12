@@ -135,7 +135,8 @@ export function OrdersList() {
           </p>
           <Link
             href="/laptops"
-            className="mt-6 inline-flex rounded-full bg-slate-950 px-7 py-3 text-xs font-semibold text-white transition hover:bg-stone-800"
+            prefetch={true}
+            className="mt-6 inline-flex rounded-full bg-slate-950 px-7 py-3 text-xs font-semibold text-white transition hover:bg-stone-800 active:scale-95"
           >
             Browse Laptops
           </Link>
@@ -146,7 +147,8 @@ export function OrdersList() {
             <Link
               key={order.id}
               href={`/account/orders/${encodeURIComponent(order.orderNumber)}`}
-              className="group block rounded-2xl bg-[#f0f2ee] p-4 sm:p-6 transition duration-200 hover:shadow-md border border-stone-200/50"
+              prefetch={true}
+              className="group block rounded-2xl bg-[#f0f2ee] p-4 sm:p-6 transition duration-200 hover:shadow-md border border-stone-200/50 active:scale-[0.99]"
             >
               <div className="flex flex-col gap-2.5 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0">

@@ -682,7 +682,7 @@ export default function StaffCatalogueCategoriesPage() {
               type="button"
               onClick={() => openCreate(null)}
               style={{ color: "#ffffff", backgroundColor: "#1a1a1a" }}
-              className="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg px-4 text-[13px] font-medium !text-white shadow-sm hover:!bg-[#303030] transition-colors active:!bg-[#000]"
+              className="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg px-4 text-[13px] font-medium !text-white shadow-sm hover:!bg-[#303030] transition-all active:scale-95 cursor-pointer"
             >
               <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5">
                 <path

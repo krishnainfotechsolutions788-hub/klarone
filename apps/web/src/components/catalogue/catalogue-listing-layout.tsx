@@ -83,7 +83,8 @@ export function CatalogueListingLayout({
               {crumb.href ? (
                 <Link
                   href={crumb.href}
-                  className="hover:text-slate-950 transition-colors truncate max-w-[100px] sm:max-w-none"
+                  prefetch={true}
+                  className="hover:text-slate-950 transition-colors truncate max-w-[100px] sm:max-w-none active:scale-95"
                 >
                   {crumb.label}
                 </Link>
@@ -167,7 +168,8 @@ export function CatalogueListingLayout({
               </p>
               <Link
                 href="/laptops"
-                className="mt-6 inline-flex rounded-full bg-slate-950 px-6 py-2.5 text-xs font-semibold !text-white transition hover:bg-stone-800"
+                prefetch={true}
+                className="mt-6 inline-flex rounded-full bg-slate-950 px-6 py-2.5 text-xs font-semibold !text-white transition hover:bg-stone-800 active:scale-95"
               >
                 Reset All Filters
               </Link>
@@ -183,7 +185,8 @@ export function CatalogueListingLayout({
                   <Link
                     key={p}
                     href={getPageUrl(p)}
-                    className={`flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full text-xs font-semibold transition-all ${
+                    prefetch={true}
+                    className={`flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-full text-xs font-semibold transition-all active:scale-90 ${
                       isCurrent
                         ? "bg-slate-950 !text-white shadow-sm"
                         : "bg-stone-100 text-stone-700 hover:bg-stone-200"
@@ -198,7 +201,8 @@ export function CatalogueListingLayout({
               {page < totalPages && (
                 <Link
                   href={getPageUrl(page + 1)}
-                  className="flex items-center gap-1 pl-2 sm:pl-3 text-xs font-medium text-slate-800 hover:text-emerald-900"
+                  prefetch={true}
+                  className="flex items-center gap-1 pl-2 sm:pl-3 text-xs font-medium text-slate-800 hover:text-emerald-900 active:scale-95 transition-transform"
                 >
                   <span>Next</span>
                   <span>&gt;</span>

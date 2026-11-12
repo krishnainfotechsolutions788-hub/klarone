@@ -178,6 +178,7 @@ export function StorefrontFormulationsSection({
                 {/* Pale Lime Rounded Pill Button with explicit black text */}
                 <Link
                   href={card.ctaLink}
+                  prefetch={true}
                   style={{ color: "#000000" }}
                   className="group/btn inline-flex items-center justify-center rounded-full bg-[#d6f088] px-6 py-2.5 text-sm font-semibold tracking-tight text-black !text-black shadow-md transition-all duration-200 hover:scale-105 hover:bg-[#c8e678] active:scale-95"
                 >

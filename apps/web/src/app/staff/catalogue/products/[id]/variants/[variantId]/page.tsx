@@ -336,8 +336,9 @@ export default function VariantDetailPage() {
           <div className="flex min-w-0 items-center gap-2">
             <Link
               href={`/staff/catalogue/products/${productId}`}
+              prefetch={true}
               aria-label="Back to product"
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-neutral-200 text-neutral-600 hover:bg-neutral-50"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-neutral-200 text-neutral-600 hover:bg-neutral-50 active:scale-95 transition-all"
             >
               <svg viewBox="0 0 16 16" fill="none" className="h-3.5 w-3.5">
                 <path
@@ -350,11 +351,18 @@ export default function VariantDetailPage() {
               </svg>
             </Link>
             <nav className="flex min-w-0 items-center gap-1.5 text-[13px]">
-              <span className="text-neutral-500">Products</span>
+              <Link
+                href="/staff/catalogue/products"
+                prefetch={true}
+                className="text-neutral-500 hover:text-neutral-800 transition-colors"
+              >
+                Products
+              </Link>
               <span className="text-neutral-300">/</span>
               <Link
                 href={`/staff/catalogue/products/${productId}`}
-                className="truncate text-neutral-500 hover:text-neutral-800"
+                prefetch={true}
+                className="truncate text-neutral-500 hover:text-neutral-800 transition-colors"
               >
                 {product.name}
               </Link>
@@ -373,7 +381,7 @@ export default function VariantDetailPage() {
                   type="button"
                   onClick={discard}
                   disabled={saving}
-                  className="rounded-full bg-white/10 px-2.5 py-1 text-[12px] font-medium hover:bg-white/20 disabled:opacity-50"
+                  className="rounded-full bg-white/10 px-2.5 py-1 text-[12px] font-medium hover:bg-white/20 active:scale-95 transition-all disabled:opacity-50"
                 >
                   Discard
                 </button>
@@ -381,7 +389,7 @@ export default function VariantDetailPage() {
                   type="button"
                   onClick={() => void save()}
                   disabled={saving}
-                  className="rounded-full bg-white px-2.5 py-1 text-[12px] font-medium text-neutral-900 hover:bg-neutral-100 disabled:opacity-50"
+                  className="rounded-full bg-white px-2.5 py-1 text-[12px] font-medium text-neutral-900 hover:bg-neutral-100 active:scale-95 transition-all disabled:opacity-50"
                 >
                   {saving ? "Saving…" : "Save"}
                 </button>
@@ -391,7 +399,7 @@ export default function VariantDetailPage() {
                 type="button"
                 onClick={() => void save()}
                 disabled={saving}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-neutral-900 px-3.5 py-1.5 text-[13px] font-medium text-white hover:bg-neutral-800 disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-neutral-900 px-3.5 py-1.5 text-[13px] font-medium text-white hover:bg-neutral-800 active:scale-95 transition-all disabled:opacity-50"
               >
                 {saving ? "Saving…" : "Save"}
               </button>
@@ -510,8 +518,9 @@ export default function VariantDetailPage() {
                       <Link
                         key={v.id}
                         href={`/staff/catalogue/products/${productId}/variants/${v.id}`}
-                        className={`flex items-center gap-3 px-3 py-2.5 transition ${
-                          active ? "bg-neutral-100" : "hover:bg-neutral-50"
+                        prefetch={true}
+                        className={`flex items-center gap-3 px-3 py-2.5 transition active:scale-[0.99] ${
+                          active ? "bg-neutral-100 font-semibold" : "hover:bg-neutral-50"
                         }`}
                       >
                         <span className="min-w-0 flex-1">

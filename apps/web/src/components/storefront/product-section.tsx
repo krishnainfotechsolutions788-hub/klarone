@@ -329,7 +329,7 @@ export function StorefrontProductSection({ initialProducts = [] }: StorefrontPro
                     </div>
                   )}
 
-                  <Link href={productUrl} className="block w-full">
+                  <Link href={productUrl} prefetch={true} className="block w-full active:scale-[0.99] transition-transform">
                     {/* Clean Unified Product Stage */}
                     <div className="relative flex aspect-[4/4.4] min-h-[250px] w-full items-center justify-center overflow-hidden rounded-[18px] bg-white/40">
                       {isCatalogueProduct ? (

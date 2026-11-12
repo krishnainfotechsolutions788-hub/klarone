@@ -964,7 +964,7 @@ export default function StaffInventoryPage() {
                               type="button"
                               disabled={inlineSubmitting}
                               onClick={() => void handleInlineSave(item)}
-                              className="flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-900 text-white hover:bg-neutral-800 disabled:opacity-50 shadow-xs"
+                              className="flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-900 text-white hover:bg-neutral-800 active:scale-95 transition-all disabled:opacity-50 shadow-xs cursor-pointer"
                             >
                               {inlineSubmitting ? (
                                 <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/40 border-t-white" />
