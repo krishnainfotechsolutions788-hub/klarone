@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
+import * as Sentry from "@sentry/nextjs";
 import { StorefrontHeader } from "@/components/storefront/header";
 import { StorefrontFooter } from "@/components/storefront/newsletter-and-footer";
 
@@ -13,8 +14,13 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Log unexpected runtime errors for debugging
+    // Log unexpected runtime errors and capture in Sentry
     console.error("Global application error:", error);
+    Sentry.captureException(error, {
+      extra: {
+        digest: error.digest,
+      },
+    });
   }, [error]);
 
   return (

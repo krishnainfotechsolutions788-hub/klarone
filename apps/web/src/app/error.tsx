@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
+import * as Sentry from "@sentry/nextjs";
 import { StorefrontHeader } from "@/components/storefront/header";
 import { StorefrontFooter } from "@/components/storefront/newsletter-and-footer";
 
@@ -13,7 +14,13 @@ export default function ErrorBoundary({
   reset: () => void;
 }) {
   useEffect(() => {
+    // Report uncaught route error to Sentry with context
     console.error("Route error caught by boundary:", error);
+    Sentry.captureException(error, {
+      extra: {
+        digest: error.digest,
+      },
+    });
   }, [error]);
 
   return (
